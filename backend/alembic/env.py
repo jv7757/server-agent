@@ -15,7 +15,7 @@ from app.config import settings
 from app.database import Base
 
 # 导入所有模型以确保它们被注册
-# from app.models import user, server, metric, chat, audit
+from app.models import User, Server, ServerMetric, UserServerPermission, ChatHistory, AuditLog
 
 # this is the Alembic Config object
 config = context.config
