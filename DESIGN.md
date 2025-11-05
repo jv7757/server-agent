@@ -18,25 +18,27 @@
 
 ### 2.1 后端技术栈
 - **框架**: FastAPI 0.104+
-- **数据库**: PostgreSQL 15+ (主数据库) + Redis (缓存/会话)
-- **ORM**: SQLAlchemy 2.0+
+- **数据库**: PostgreSQL 15+ / MySQL 8.0+ (可配置) + Redis (缓存/会话)
+- **ORM**: SQLAlchemy 2.0+ (支持多数据库适配)
 - **SSH管理**: Paramiko 3.3+
 - **认证**: JWT (JSON Web Token)
 - **密码加密**: Passlib + Bcrypt
 - **数据验证**: Pydantic V2
 - **异步任务**: Celery + Redis
-- **AI集成**: OpenAI API / Anthropic Claude API
+- **AI集成**: 适配器模式支持 OpenAI / Claude / Ollama (可扩展)
 - **日志**: Loguru
 
 ### 2.2 前端技术栈
 - **框架**: Vue 3.3+ (Composition API)
 - **构建工具**: Vite 5+
-- **UI框架**: Element Plus / Ant Design Vue
+- **UI框架**: Element Plus
 - **状态管理**: Pinia
 - **路由**: Vue Router 4
 - **HTTP客户端**: Axios
-- **图表**: ECharts / Chart.js
+- **图表**: ECharts
+- **终端**: xterm.js (Web Terminal)
 - **WebSocket**: Socket.io-client (实时监控)
+- **国际化**: Vue I18n (中英双语)
 - **TypeScript**: 全面使用
 
 ### 2.3 开发工具
@@ -534,6 +536,85 @@ AI Chatbot支持自然语言理解用户意图，并执行相应操作：
 - AI自动选择调用合适的函数
 - 实施安全防护（命令白名单、危险命令拦截）
 
+### 8.3 AI适配器模式设计
+
+为了支持多个AI提供商（OpenAI、Claude、Ollama等），我们采用**适配器模式**：
+
+```python
+# AI提供商抽象接口
+class AIProvider(ABC):
+    @abstractmethod
+    async def chat(self, messages: List[Dict], tools: List[Dict]) -> Dict:
+        pass
+
+    @abstractmethod
+    async def stream_chat(self, messages: List[Dict], tools: List[Dict]):
+        pass
+
+# OpenAI适配器
+class OpenAIProvider(AIProvider):
+    def __init__(self, api_key: str, model: str = "gpt-4"):
+        self.client = OpenAI(api_key=api_key)
+        self.model = model
+
+    async def chat(self, messages: List[Dict], tools: List[Dict]) -> Dict:
+        response = await self.client.chat.completions.create(
+            model=self.model,
+            messages=messages,
+            tools=tools
+        )
+        return self._format_response(response)
+
+# Claude适配器
+class ClaudeProvider(AIProvider):
+    def __init__(self, api_key: str, model: str = "claude-3-5-sonnet-20241022"):
+        self.client = Anthropic(api_key=api_key)
+        self.model = model
+
+    async def chat(self, messages: List[Dict], tools: List[Dict]) -> Dict:
+        response = await self.client.messages.create(
+            model=self.model,
+            messages=messages,
+            tools=tools
+        )
+        return self._format_response(response)
+
+# Ollama适配器
+class OllamaProvider(AIProvider):
+    def __init__(self, base_url: str = "http://localhost:11434", model: str = "llama2"):
+        self.base_url = base_url
+        self.model = model
+
+    async def chat(self, messages: List[Dict], tools: List[Dict]) -> Dict:
+        # Ollama API调用
+        ...
+
+# AI服务工厂
+class AIServiceFactory:
+    @staticmethod
+    def create(provider: str, **kwargs) -> AIProvider:
+        if provider == "openai":
+            return OpenAIProvider(**kwargs)
+        elif provider == "claude":
+            return ClaudeProvider(**kwargs)
+        elif provider == "ollama":
+            return OllamaProvider(**kwargs)
+        else:
+            raise ValueError(f"Unsupported AI provider: {provider}")
+```
+
+**配置方式**：
+```env
+AI_PROVIDER=openai  # 可选: openai, claude, ollama
+AI_MODEL=gpt-4      # 根据provider选择对应模型
+```
+
+**扩展新的AI提供商**：
+1. 创建新的适配器类，继承`AIProvider`
+2. 实现`chat`和`stream_chat`方法
+3. 在工厂类中注册新提供商
+4. 无需修改业务逻辑代码
+
 ---
 
 ## 9. 安全措施
@@ -762,7 +843,9 @@ server-agent/
 
 ```env
 # 数据库配置
+DATABASE_TYPE=postgresql  # 可选: postgresql, mysql
 DATABASE_URL=postgresql://user:password@localhost:5432/server_agent
+# MySQL示例: mysql+aiomysql://user:password@localhost:3306/server_agent
 REDIS_URL=redis://localhost:6379/0
 
 # JWT配置
@@ -775,9 +858,11 @@ REFRESH_TOKEN_EXPIRE_DAYS=7
 ENCRYPTION_KEY=your-fernet-key-here
 
 # AI配置
+AI_PROVIDER=openai  # 可选: openai, claude, ollama
+AI_MODEL=gpt-4      # openai: gpt-4, gpt-3.5-turbo | claude: claude-3-5-sonnet-20241022 | ollama: llama2, mistral
 OPENAI_API_KEY=sk-...
-# 或
 ANTHROPIC_API_KEY=sk-ant-...
+OLLAMA_BASE_URL=http://localhost:11434
 
 # 邮件配置（可选，用于密码重置）
 SMTP_HOST=smtp.gmail.com
@@ -830,19 +915,20 @@ API Docs: http://localhost:8000/docs
 
 ---
 
-## 15. 待确认事项
+## 15. 技术选型确认 ✅
 
-请确认以下设计选择：
+以下设计选择已确认：
 
-1. **数据库选择**: PostgreSQL + Redis 是否满足需求？
-2. **AI供应商**: 使用OpenAI还是Anthropic Claude？或两者都支持？
-3. **UI框架**: Element Plus 还是 Ant Design Vue？
-4. **Web Terminal**: 是否需要实现？（涉及WebSocket和xterm.js）
-5. **邮件通知**: 是否需要告警邮件功能？
-6. **多语言支持**: 是否需要国际化（i18n）？
-7. **容器编排**: 开发环境使用Docker Compose，生产环境是否使用Kubernetes？
+1. **数据库选择**: ✅ 支持 PostgreSQL / MySQL（可配置） + Redis
+2. **AI供应商**: ✅ 适配器模式支持 OpenAI / Claude / Ollama（可扩展）
+3. **UI框架**: ✅ Element Plus
+4. **Web Terminal**: ✅ 实现（使用xterm.js + WebSocket）
+5. **多语言支持**: ✅ 国际化（i18n）- 中英双语
+6. **邮件通知**: ⏸️ 待后续扩展
+7. **容器编排**: 开发环境使用Docker Compose，生产环境可选Kubernetes
 
 ---
 
 **设计完成日期**: 2025-11-05
-**文档版本**: v1.0
+**设计确认日期**: 2025-11-05
+**文档版本**: v1.1
