@@ -39,16 +39,22 @@ export interface RegisterRequest {
   password: string
 }
 
-export interface LoginResponse {
+export interface TokenResponse {
   access_token: string
   refresh_token: string
   token_type: string
-  user: User
+  expires_in: number
 }
 
-export interface TokenResponse {
+export interface LoginResponse {
+  user: User
+  tokens: TokenResponse
+}
+
+export interface RefreshTokenResponse {
   access_token: string
   token_type: string
+  expires_in: number
 }
 
 // ========== 服务器 ==========

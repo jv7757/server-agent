@@ -31,8 +31,9 @@ export const useAuthStore = defineStore(
       isLoading.value = true
       try {
         const response = await authApi.login(credentials)
-        token.value = response.access_token
-        refreshToken.value = response.refresh_token
+        // Backend returns { user, tokens: { access_token, refresh_token, ... } }
+        token.value = response.tokens.access_token
+        refreshToken.value = response.tokens.refresh_token
         user.value = response.user
         ElMessage.success('登录成功')
         return true
