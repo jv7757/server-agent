@@ -4,7 +4,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 # ========== 聊天请求 ==========
@@ -45,6 +45,14 @@ class ChatMessageResponse(BaseModel):
     role: str
     content: str
     created_at: datetime
+
+    @field_validator('id', mode='before')
+    @classmethod
+    def convert_uuid_to_str(cls, v):
+        """将 UUID 转换为字符串"""
+        if isinstance(v, UUID):
+            return str(v)
+        return v
 
     class Config:
         from_attributes = True
