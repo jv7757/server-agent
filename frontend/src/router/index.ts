@@ -3,6 +3,7 @@
  */
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 
 // 路由配置
@@ -45,10 +46,16 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '监控面板', icon: 'Monitor' },
       },
       {
+        path: 'terminal',
+        name: 'Terminal',
+        component: () => import('@/views/servers/ServerTerminal.vue'),
+        meta: { title: 'Web Terminal', icon: 'Console' },
+      },
+      {
         path: 'execute',
         name: 'Execute',
         component: () => import('@/views/execute/CommandExecute.vue'),
-        meta: { title: '命令执行', icon: 'Console' },
+        meta: { title: '命令执行', icon: 'Operation' },
       },
       {
         path: 'chat',
