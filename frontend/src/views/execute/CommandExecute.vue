@@ -269,7 +269,6 @@ import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import {
-  Terminal,
   VideoPlay,
   Check,
   Delete,
@@ -278,6 +277,7 @@ import {
   Clock,
   Refresh,
 } from '@element-plus/icons-vue'
+import { Tools as Terminal } from '@element-plus/icons-vue'
 import { useExecuteStore } from '@/stores/execute'
 import { useServersStore } from '@/stores/servers'
 import type { CommandExecuteRequest, CommandHistory } from '@/types/api'
