@@ -9,6 +9,14 @@ from app.schemas.auth import (
     TokenPayload,
     TokenResponse,
 )
+from app.schemas.metric import (
+    CurrentMetricsResponse,
+    MetricResponse,
+    MetricsHistoryResponse,
+    MetricsQueryParams,
+    MetricsSummaryParams,
+    MetricsSummaryResponse,
+)
 from app.schemas.server import (
     ConnectionTestResponse,
     ServerCreate,
@@ -58,4 +66,11 @@ __all__ = [
     "ServerQueryParams",
     "ConnectionTestResponse",
     "SystemInfoResponse",
+    # Metrics
+    "MetricResponse",
+    "CurrentMetricsResponse",
+    "MetricsHistoryResponse",
+    "MetricsSummaryResponse",
+    "MetricsQueryParams",
+    "MetricsSummaryParams",
 ]
