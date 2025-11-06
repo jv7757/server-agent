@@ -108,6 +108,35 @@ export const useAuthStore = defineStore(
     }
 
     /**
+     * 检查认证状态（应用启动时调用）
+     */
+    const checkAuth = async () => {
+      // 如果没有 token，直接返回
+      if (!token.value) {
+        return false
+      }
+
+      // 尝试获取用户信息以验证 token 是否有效
+      const success = await fetchUser()
+
+      // 如果失败，尝试刷新 token
+      if (!success && refreshToken.value) {
+        const refreshed = await refresh()
+        if (refreshed) {
+          // 刷新成功后再次获取用户信息
+          return await fetchUser()
+        }
+      }
+
+      // 如果都失败了，清除认证状态
+      if (!success) {
+        logout()
+      }
+
+      return success
+    }
+
+    /**
      * 更新用户资料
      */
     const updateProfile = async (data: Partial<User>) => {
@@ -154,6 +183,7 @@ export const useAuthStore = defineStore(
       logout,
       refresh,
       fetchUser,
+      checkAuth,
       updateProfile,
       changePassword,
     }
