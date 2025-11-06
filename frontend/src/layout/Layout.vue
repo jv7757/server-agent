@@ -107,8 +107,8 @@ import {
   Expand,
   User,
   SwitchButton,
-  Globe,
 } from '@element-plus/icons-vue'
+import { Guide as Globe } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const route = useRoute()
