@@ -15,6 +15,7 @@ class ChatRequest(BaseModel):
 
     message: str = Field(..., min_length=1, description="用户消息")
     conversation_id: UUID | None = Field(None, description="会话ID（可选，不提供则创建新会话）")
+    server_id: UUID | None = Field(None, description="默认服务器ID（可选，作为工具调用的上下文）")
 
 
 class ChatStreamRequest(BaseModel):
@@ -22,6 +23,7 @@ class ChatStreamRequest(BaseModel):
 
     message: str = Field(..., min_length=1, description="用户消息")
     conversation_id: UUID | None = Field(None, description="会话ID（可选，不提供则创建新会话）")
+    server_id: UUID | None = Field(None, description="默认服务器ID（可选，作为工具调用的上下文）")
 
 
 # ========== 聊天响应 ==========

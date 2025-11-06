@@ -51,6 +51,7 @@ class AIService:
         self,
         message: str,
         conversation_id: UUID | None = None,
+        server_id: UUID | None = None,
         max_iterations: int = 10,
     ) -> Dict:
         """
@@ -59,12 +60,17 @@ class AIService:
         Args:
             message: 用户消息
             conversation_id: 会话ID（可选）
+            server_id: 默认服务器ID（可选，作为工具调用的上下文）
             max_iterations: 最大迭代次数（防止无限循环）
 
         Returns:
             Dict: 聊天响应
         """
         try:
+            # 如果提供了server_id，更新AITools的默认服务器
+            if server_id:
+                self.ai_tools.default_server_id = server_id
+
             # 获取历史消息
             history = await self._get_conversation_history(conversation_id, limit=10)
 

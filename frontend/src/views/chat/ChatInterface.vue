@@ -263,6 +263,7 @@ const handleSend = async () => {
   const success = await chatStore.sendMessage({
     message,
     conversation_id: chatStore.currentConversationId || undefined,
+    server_id: selectedServerId.value || undefined,
   })
 
   if (success) {

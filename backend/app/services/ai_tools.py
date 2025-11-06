@@ -20,11 +20,13 @@ class AITools:
         metrics_service: MetricsService,
         execute_service: ExecuteService,
         user_id: UUID,
+        default_server_id: UUID | None = None,
     ):
         self.server_service = server_service
         self.metrics_service = metrics_service
         self.execute_service = execute_service
         self.user_id = user_id
+        self.default_server_id = default_server_id
 
     def get_tool_definitions(self) -> List[Dict[str, Any]]:
         """
@@ -64,16 +66,16 @@ class AITools:
                 "type": "function",
                 "function": {
                     "name": "get_server_metrics",
-                    "description": "获取指定服务器的当前性能指标，包括CPU、内存、磁盘、网络使用情况。",
+                    "description": "获取指定服务器的当前性能指标，包括CPU、内存、磁盘、网络使用情况。如果没有指定server_id，将使用当前会话的默认服务器。",
                     "parameters": {
                         "type": "object",
                         "properties": {
                             "server_id": {
                                 "type": "string",
-                                "description": "服务器ID（UUID格式）",
+                                "description": "服务器ID（UUID格式，可选）",
                             },
                         },
-                        "required": ["server_id"],
+                        "required": [],
                     },
                 },
             },
@@ -81,13 +83,13 @@ class AITools:
                 "type": "function",
                 "function": {
                     "name": "execute_command",
-                    "description": "在指定服务器上执行Shell命令。注意：危险命令会被拒绝，除非用户明确允许。",
+                    "description": "在指定服务器上执行Shell命令。如果没有指定server_id，将使用当前会话的默认服务器。注意：危险命令会被拒绝，除非用户明确允许。",
                     "parameters": {
                         "type": "object",
                         "properties": {
                             "server_id": {
                                 "type": "string",
-                                "description": "服务器ID（UUID格式）",
+                                "description": "服务器ID（UUID格式，可选）",
                             },
                             "command": {
                                 "type": "string",
@@ -99,7 +101,7 @@ class AITools:
                                 "default": False,
                             },
                         },
-                        "required": ["server_id", "command"],
+                        "required": ["command"],
                     },
                 },
             },
@@ -107,16 +109,16 @@ class AITools:
                 "type": "function",
                 "function": {
                     "name": "get_server_info",
-                    "description": "获取服务器的详细信息，包括名称、地址、状态、标签等。",
+                    "description": "获取服务器的详细信息，包括名称、地址、状态、标签等。如果没有指定server_id，将使用当前会话的默认服务器。",
                     "parameters": {
                         "type": "object",
                         "properties": {
                             "server_id": {
                                 "type": "string",
-                                "description": "服务器ID（UUID格式）",
+                                "description": "服务器ID（UUID格式，可选）",
                             },
                         },
-                        "required": ["server_id"],
+                        "required": [],
                     },
                 },
             },
@@ -175,10 +177,19 @@ class AITools:
                 "error": str(e),
             }
 
-    async def get_server_metrics(self, server_id: str) -> Dict[str, Any]:
+    async def get_server_metrics(self, server_id: str | None = None) -> Dict[str, Any]:
         """获取服务器指标"""
         try:
-            server_uuid = UUID(server_id)
+            # 如果没有提供server_id，使用默认的
+            if server_id is None:
+                if self.default_server_id is None:
+                    return {
+                        "success": False,
+                        "error": "找不到服务器或访问被拒绝。请确认服务器ID和访问权限是否正确。",
+                    }
+                server_uuid = self.default_server_id
+            else:
+                server_uuid = UUID(server_id)
 
             # 验证服务器所有权
             server = await self.server_service.get_server_by_id(server_uuid, self.user_id)
@@ -226,11 +237,20 @@ class AITools:
             }
 
     async def execute_command(
-        self, server_id: str, command: str, allow_dangerous: bool = False
+        self, server_id: str | None = None, command: str = "", allow_dangerous: bool = False
     ) -> Dict[str, Any]:
         """执行命令"""
         try:
-            server_uuid = UUID(server_id)
+            # 如果没有提供server_id，使用默认的
+            if server_id is None:
+                if self.default_server_id is None:
+                    return {
+                        "success": False,
+                        "error": "找不到服务器或访问被拒绝。请确认服务器ID和访问权限是否正确。",
+                    }
+                server_uuid = self.default_server_id
+            else:
+                server_uuid = UUID(server_id)
 
             # 验证服务器所有权
             server = await self.server_service.get_server_by_id(server_uuid, self.user_id)
@@ -271,10 +291,19 @@ class AITools:
                 "error": str(e),
             }
 
-    async def get_server_info(self, server_id: str) -> Dict[str, Any]:
+    async def get_server_info(self, server_id: str | None = None) -> Dict[str, Any]:
         """获取服务器信息"""
         try:
-            server_uuid = UUID(server_id)
+            # 如果没有提供server_id，使用默认的
+            if server_id is None:
+                if self.default_server_id is None:
+                    return {
+                        "success": False,
+                        "error": "找不到服务器或访问被拒绝。请确认服务器ID和访问权限是否正确。",
+                    }
+                server_uuid = self.default_server_id
+            else:
+                server_uuid = UUID(server_id)
 
             server = await self.server_service.get_server_by_id(server_uuid, self.user_id)
 

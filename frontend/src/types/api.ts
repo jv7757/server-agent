@@ -180,6 +180,7 @@ export interface CommandHistory {
 export interface ChatRequest {
   message: string
   conversation_id?: string
+  server_id?: string
 }
 
 export interface ChatResponse {

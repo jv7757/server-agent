@@ -57,6 +57,7 @@ async def chat(
         result = await ai_service.chat(
             message=chat_request.message,
             conversation_id=chat_request.conversation_id,
+            server_id=chat_request.server_id,
         )
 
         return ChatResponse(**result)
