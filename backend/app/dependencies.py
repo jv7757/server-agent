@@ -4,7 +4,7 @@ FastAPI依赖注入
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, WebSocket, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -51,6 +51,44 @@ async def get_current_user(
             detail=str(e),
             headers={"WWW-Authenticate": "Bearer"},
         )
+
+
+async def get_current_user_ws(
+    websocket: WebSocket,
+    token: str,
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> User:
+    """
+    获取当前登录用户 (WebSocket)
+
+    从query参数中获取token: ?token=xxx
+
+    Args:
+        websocket: WebSocket连接
+        token: JWT token (从query参数获取)
+        db: 数据库会话
+
+    Returns:
+        User: 当前用户
+
+    Raises:
+        WebSocketException: 401 未授权
+    """
+    try:
+        auth_service = AuthService(db)
+        user = await auth_service.get_current_user(token)
+
+        if not user.is_active:
+            await websocket.close(code=status.WS_1008_POLICY_VIOLATION, reason="Inactive user")
+            raise ValueError("Inactive user")
+
+        return user
+    except ValueError as e:
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION, reason=str(e))
+        raise
+    except Exception as e:
+        await websocket.close(code=status.WS_1011_INTERNAL_ERROR, reason="Authentication failed")
+        raise
 
 
 async def get_current_active_user(
