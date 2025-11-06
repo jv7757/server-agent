@@ -14,7 +14,20 @@ from app.config import settings
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Fernet加密器（用于加密SSH密钥和密码）
-fernet = Fernet(settings.encryption_key.encode())
+try:
+    fernet = Fernet(settings.encryption_key.encode())
+except Exception as e:
+    print("\n" + "="*80)
+    print("ERROR: Invalid ENCRYPTION_KEY in environment variables!")
+    print("="*80)
+    print("\nTo generate a valid Fernet key, run this command:")
+    print("\n  python -c \"from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())\"")
+    print("\nThen add it to your .env file:")
+    print("  ENCRYPTION_KEY=<generated_key>")
+    print("\nExample .env entry:")
+    print("  ENCRYPTION_KEY=xQzT-Hn8vYc6MZi2V7fKJ9kL3pN5rS8tA1wD4eG6hB0=")
+    print("\n" + "="*80 + "\n")
+    raise ValueError(f"Invalid ENCRYPTION_KEY: {str(e)}")
 
 
 # ========== 密码哈希 ==========
