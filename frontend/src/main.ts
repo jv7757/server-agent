@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
@@ -23,6 +24,10 @@ const i18n = createI18n({
   }
 })
 
+// 创建 Pinia 实例
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
+
 // 创建应用实例
 const app = createApp(App)
 
@@ -32,7 +37,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 
 // 使用插件
-app.use(createPinia())
+app.use(pinia)
 app.use(router)
 app.use(ElementPlus)
 app.use(i18n)
