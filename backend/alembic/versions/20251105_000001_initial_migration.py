@@ -48,6 +48,16 @@ def get_inet_column():
         return sa.String(45)
 
 
+def get_json_column_with_default():
+    """Get JSON column with default value (PostgreSQL only supports defaults)"""
+    bind = op.get_bind()
+    if bind.dialect.name == 'postgresql':
+        return get_json_column(), '[]'
+    else:
+        # MySQL doesn't support defaults for JSON columns
+        return get_json_column(), None
+
+
 def upgrade() -> None:
     """创建所有表"""
 
@@ -69,6 +79,7 @@ def upgrade() -> None:
     op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)
 
     # 创建服务器表
+    json_col, json_default = get_json_column_with_default()
     op.create_table(
         'servers',
         sa.Column('id', get_uuid_column(), nullable=False),
@@ -80,7 +91,7 @@ def upgrade() -> None:
         sa.Column('ssh_username', sa.String(length=100), nullable=True),
         sa.Column('ssh_password_encrypted', sa.Text(), nullable=True),
         sa.Column('ssh_key_encrypted', sa.Text(), nullable=True),
-        sa.Column('tags', get_json_column(), nullable=False, server_default='[]'),
+        sa.Column('tags', json_col, nullable=True, server_default=json_default),
         sa.Column('status', sa.String(length=20), nullable=False, server_default='unknown'),
         sa.Column('last_checked_at', sa.DateTime(), nullable=True),
         sa.Column('created_at', sa.DateTime(), nullable=False, server_default=sa.text('CURRENT_TIMESTAMP')),
