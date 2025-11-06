@@ -8,10 +8,12 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect, status
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.dependencies import get_current_user_ws
+from app.models.server import Server
 from app.models.user import User
 from app.services.ssh_service import SSHService
 from app.services.metrics_service import MetricsService
@@ -109,20 +111,40 @@ async def terminal_websocket(
     """
     connection_id = f"{server_id}_{current_user.id}"
 
+    ssh_service = None
+    shell = None
+
     try:
         await manager.connect_terminal(connection_id, websocket)
 
-        # 创建SSH连接
-        ssh_service = SSHService(db)
-        ssh_client = None
-        shell = None
+        # 获取服务器信息
+        result = await db.execute(
+            select(Server).where(Server.id == server_id, Server.owner_id == current_user.id)
+        )
+        server = result.scalar_one_or_none()
+
+        if not server:
+            await websocket.send_json({
+                "type": "error",
+                "message": "服务器不存在或无权访问"
+            })
+            return
+
+        # 创建SSH服务
+        ssh_service = await SSHService.create_from_encrypted(
+            host=server.host,
+            port=server.port,
+            username=server.ssh_username or "",
+            encrypted_password=server.ssh_password_encrypted,
+            encrypted_key=server.ssh_key_encrypted,
+        )
 
         try:
-            # 获取服务器并建立SSH连接
-            ssh_client = await ssh_service.connect(server_id, current_user.id)
+            # 建立SSH连接
+            await ssh_service.connect()
 
             # 创建交互式shell
-            shell = ssh_client.invoke_shell(
+            shell = ssh_service.client.invoke_shell(
                 term="xterm-256color",
                 width=80,
                 height=24,
@@ -201,8 +223,8 @@ async def terminal_websocket(
             # 清理SSH连接
             if shell:
                 shell.close()
-            if ssh_client:
-                ssh_client.close()
+            if ssh_service:
+                await ssh_service.disconnect()
 
     except Exception as e:
         logger.error(f"Terminal WebSocket error: {e}")
