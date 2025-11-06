@@ -45,8 +45,13 @@ class ChatHistory(Base):
     )  # user, assistant, system
     content: Mapped[str] = mapped_column(Text, nullable=False)
 
-    # 元数据（存储命令执行结果、工具调用等）
-    metadata: Mapped[dict | None] = mapped_column(JSONB)
+    # 会话ID（用于分组对话）
+    conversation_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), index=True, default=uuid.uuid4
+    )
+
+    # 额外数据（存储命令执行结果、工具调用等）
+    extra_data: Mapped[dict | None] = mapped_column(JSONB)
 
     # 时间戳
     created_at: Mapped[datetime] = mapped_column(
@@ -83,6 +88,7 @@ class ChatHistory(Base):
             "server_id": str(self.server_id) if self.server_id else None,
             "role": self.role,
             "content": self.content,
-            "metadata": self.metadata,
+            "conversation_id": str(self.conversation_id) if self.conversation_id else None,
+            "extra_data": self.extra_data,
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }
