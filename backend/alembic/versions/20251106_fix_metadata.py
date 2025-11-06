@@ -16,17 +16,37 @@ branch_labels = None
 depends_on = None
 
 
+def get_uuid_column():
+    """Get UUID column type based on database dialect"""
+    bind = op.get_bind()
+    if bind.dialect.name == 'postgresql':
+        return postgresql.UUID(as_uuid=True)
+    else:
+        # MySQL and others use CHAR(36)
+        return sa.CHAR(36)
+
+
+def get_json_column():
+    """Get JSON column type based on database dialect"""
+    bind = op.get_bind()
+    if bind.dialect.name == 'postgresql':
+        return postgresql.JSONB(astext_type=sa.Text())
+    else:
+        # MySQL uses JSON
+        return sa.JSON()
+
+
 def upgrade() -> None:
     # Rename metadata column to extra_data
     op.alter_column('chat_history', 'metadata',
                     new_column_name='extra_data',
-                    existing_type=postgresql.JSONB(astext_type=sa.Text()),
+                    existing_type=get_json_column(),
                     existing_nullable=True)
 
     # Add conversation_id column
     op.add_column('chat_history',
                   sa.Column('conversation_id',
-                           postgresql.UUID(as_uuid=True),
+                           get_uuid_column(),
                            nullable=True))
 
     # Add index for conversation_id
@@ -46,5 +66,5 @@ def downgrade() -> None:
     # Rename extra_data back to metadata
     op.alter_column('chat_history', 'extra_data',
                     new_column_name='metadata',
-                    existing_type=postgresql.JSONB(astext_type=sa.Text()),
+                    existing_type=get_json_column(),
                     existing_nullable=True)
