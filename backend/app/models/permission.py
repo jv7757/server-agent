@@ -43,13 +43,14 @@ class UserServerPermission(Base):
         index=True
     )
 
-    # 权限类型
-    permission: Mapped[str] = mapped_column(
-        String(20), nullable=False
-    )  # read, write, execute, admin
+    # 权限标志
+    can_read: Mapped[bool] = mapped_column(default=False, nullable=False)
+    can_write: Mapped[bool] = mapped_column(default=False, nullable=False)
+    can_execute: Mapped[bool] = mapped_column(default=False, nullable=False)
+    can_admin: Mapped[bool] = mapped_column(default=False, nullable=False)
 
     # 授权信息
-    granted_at: Mapped[datetime] = mapped_column(
+    created_at: Mapped[datetime] = mapped_column(
         DateTime, default=datetime.utcnow, nullable=False
     )
     granted_by: Mapped[uuid.UUID | None] = mapped_column(
@@ -62,24 +63,13 @@ class UserServerPermission(Base):
     granter: Mapped["User | None"] = relationship("User", foreign_keys=[granted_by])
 
     def __repr__(self) -> str:
-        return f"<Permission {self.user_id} -> {self.server_id}: {self.permission}>"
-
-    @property
-    def can_read(self) -> bool:
-        """是否有读权限"""
-        return self.permission in ["read", "write", "execute", "admin"]
-
-    @property
-    def can_write(self) -> bool:
-        """是否有写权限"""
-        return self.permission in ["write", "execute", "admin"]
-
-    @property
-    def can_execute(self) -> bool:
-        """是否有执行权限"""
-        return self.permission in ["execute", "admin"]
-
-    @property
-    def is_admin(self) -> bool:
-        """是否有管理员权限"""
-        return self.permission == "admin"
+        permissions = []
+        if self.can_read:
+            permissions.append("read")
+        if self.can_write:
+            permissions.append("write")
+        if self.can_execute:
+            permissions.append("execute")
+        if self.can_admin:
+            permissions.append("admin")
+        return f"<Permission {self.user_id} -> {self.server_id}: {','.join(permissions)}>"
