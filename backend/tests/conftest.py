@@ -18,7 +18,7 @@ from app.core.security import get_password_hash
 from app.database import Base, get_db
 from app.main import app
 from app.models.server import Server
-from app.models.user import User, UserRole
+from app.models.user import User
 
 # 创建Faker实例
 fake = Faker()
@@ -98,8 +98,8 @@ async def test_user(test_db: AsyncSession) -> User:
     user = User(
         username="testuser",
         email="testuser@example.com",
-        password_hash=get_password_hash("testpass123"),
-        role=UserRole.USER,
+        hashed_password=get_password_hash("testpass123"),
+        role="user",
         is_active=True,
     )
     test_db.add(user)
@@ -114,8 +114,8 @@ async def test_admin(test_db: AsyncSession) -> User:
     admin = User(
         username="admin",
         email="admin@example.com",
-        password_hash=get_password_hash("adminpass123"),
-        role=UserRole.ADMIN,
+        hashed_password=get_password_hash("adminpass123"),
+        role="admin",
         is_active=True,
     )
     test_db.add(admin)
@@ -130,8 +130,8 @@ async def test_viewer(test_db: AsyncSession) -> User:
     viewer = User(
         username="viewer",
         email="viewer@example.com",
-        password_hash=get_password_hash("viewerpass123"),
-        role=UserRole.VIEWER,
+        hashed_password=get_password_hash("viewerpass123"),
+        role="viewer",
         is_active=True,
     )
     test_db.add(viewer)
