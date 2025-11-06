@@ -51,7 +51,10 @@ class User(Base):
         "Server", back_populates="owner", cascade="all, delete-orphan"
     )
     permissions: Mapped[list["UserServerPermission"]] = relationship(
-        "UserServerPermission", back_populates="user", cascade="all, delete-orphan"
+        "UserServerPermission",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        foreign_keys="[UserServerPermission.user_id]"
     )
     chat_history: Mapped[list["ChatHistory"]] = relationship(
         "ChatHistory", back_populates="user", cascade="all, delete-orphan"
