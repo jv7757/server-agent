@@ -133,6 +133,15 @@
           <span class="uptime">
             运行时间: {{ formatUptime(currentMetrics.uptime || 0) }}
           </span>
+          <el-button
+            type="primary"
+            :icon="Refresh"
+            :loading="isCollecting"
+            @click="handleCollectMetrics"
+            style="margin-left: auto"
+          >
+            {{ isCollecting ? '采集中...' : '立即采集' }}
+          </el-button>
         </div>
       </el-card>
 
@@ -175,11 +184,13 @@ import {
   Files,
   Connection,
   Loading,
+  Refresh,
 } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 import type { ECharts } from 'echarts'
 import { useServersStore } from '@/stores/servers'
 import { createWebSocket, WebSocketClient } from '@/utils/websocket'
+import * as metricsApi from '@/api/metrics'
 
 const serversStore = useServersStore()
 
@@ -190,6 +201,7 @@ const currentMetrics = ref<any>({})
 const lastUpdateTime = ref<string>('--')
 const selectedPeriod = ref('1h')
 const chartRef = ref<HTMLElement>()
+const isCollecting = ref(false)
 
 let ws: WebSocketClient | null = null
 let chart: ECharts | null = null
@@ -370,6 +382,25 @@ const handleServerChange = () => {
   nextTick(() => {
     chart?.clear()
   })
+  // 切换服务器后自动采集一次
+  handleCollectMetrics()
+}
+
+// 手动采集监控数据
+const handleCollectMetrics = async () => {
+  if (!selectedServerId.value || isCollecting.value) return
+
+  isCollecting.value = true
+  try {
+    await metricsApi.collectMetrics(selectedServerId.value)
+    ElMessage.success('监控数据采集成功')
+    // 采集成功后，等待1秒让数据写入数据库，然后WebSocket会自动推送新数据
+  } catch (error: any) {
+    console.error('Failed to collect metrics:', error)
+    ElMessage.error(error.response?.data?.detail || '采集监控数据失败')
+  } finally {
+    isCollecting.value = false
+  }
 }
 
 // 清理
@@ -386,6 +417,8 @@ onMounted(async () => {
   if (servers.value.length > 0) {
     selectedServerId.value = servers.value[0].id
     connectWebSocket()
+    // 首次加载时自动采集一次监控数据
+    handleCollectMetrics()
   }
 
   nextTick(() => {
