@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.permission import UserServerPermission
 from app.models.server import Server
-from app.models.user import User, UserRole
+from app.models.user import User
 from app.utils.logger import logger
 
 
@@ -294,7 +294,7 @@ class PermissionService:
             return False
 
         # 管理员有所有权限
-        if user.role == UserRole.ADMIN:
+        if user.role == "admin":
             return True
 
         # 检查用户是否是服务器所有者
@@ -360,7 +360,7 @@ class PermissionService:
         if not user:
             return False
 
-        if user.role == UserRole.ADMIN:
+        if user.role == "admin":
             return True
 
         # 检查是否是服务器所有者
@@ -403,7 +403,7 @@ class PermissionService:
             return []
 
         # 管理员可以访问所有服务器
-        if user.role == UserRole.ADMIN:
+        if user.role == "admin":
             result = await self.db.execute(select(Server.id))
             return [row[0] for row in result.all()]
 
