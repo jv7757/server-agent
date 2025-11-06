@@ -15,70 +15,97 @@
     "success": "Success",
     "error": "Error",
     "warning": "Warning",
-    "info": "Info"
+    "info": "Info",
+    "actions": "Actions",
+    "comingSoon": "Coming Soon",
+    "featureInDevelopment": "This feature is under development, stay tuned!"
   },
-  "auth": {
-    "login": "Login",
-    "register": "Register",
-    "logout": "Logout",
+  "login": {
+    "title": "Login",
     "username": "Username",
     "password": "Password",
-    "email": "Email",
-    "fullName": "Full Name",
-    "rememberMe": "Remember me",
-    "forgotPassword": "Forgot password?",
+    "usernamePlaceholder": "Enter username",
+    "passwordPlaceholder": "Enter password",
+    "loginButton": "Login",
     "noAccount": "Don't have an account?",
+    "registerLink": "Register now",
+    "usernameRequired": "Please enter username",
+    "passwordRequired": "Please enter password",
+    "passwordMinLength": "Password must be at least 6 characters"
+  },
+  "register": {
+    "title": "Register",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "usernamePlaceholder": "Enter username",
+    "emailPlaceholder": "Enter email",
+    "passwordPlaceholder": "Enter password",
+    "confirmPasswordPlaceholder": "Enter password again",
+    "registerButton": "Register",
     "hasAccount": "Already have an account?",
-    "loginSuccess": "Login successful",
-    "logoutSuccess": "Logout successful",
-    "registerSuccess": "Registration successful"
+    "loginLink": "Login now",
+    "usernameRequired": "Please enter username",
+    "usernameLength": "Username must be 3-20 characters",
+    "emailRequired": "Please enter email",
+    "emailInvalid": "Invalid email format",
+    "passwordRequired": "Please enter password",
+    "passwordMinLength": "Password must be at least 8 characters",
+    "confirmPasswordRequired": "Please confirm password",
+    "passwordMismatch": "Passwords do not match"
   },
-  "nav": {
-    "dashboard": "Dashboard",
-    "servers": "Servers",
-    "monitoring": "Monitoring",
-    "chat": "AI Assistant",
+  "layout": {
     "profile": "Profile",
-    "users": "Users",
-    "auditLogs": "Audit Logs",
-    "settings": "Settings"
+    "logout": "Logout"
   },
-  "server": {
-    "list": "Server List",
-    "detail": "Server Detail",
-    "add": "Add Server",
+  "servers": {
+    "title": "Server Management",
+    "create": "Create Server",
     "edit": "Edit Server",
-    "delete": "Delete Server",
+    "delete": "Delete",
     "name": "Server Name",
     "host": "Host",
     "port": "Port",
     "status": "Status",
-    "online": "Online",
-    "offline": "Offline",
-    "unknown": "Unknown",
-    "description": "Description",
     "tags": "Tags",
     "sshUsername": "SSH Username",
     "sshPassword": "SSH Password",
-    "sshKey": "SSH Key",
-    "testConnection": "Test Connection",
-    "connectionSuccess": "Connection successful",
-    "connectionFailed": "Connection failed"
+    "description": "Description",
+    "createdAt": "Created At",
+    "test": "Test Connection",
+    "searchPlaceholder": "Search server name or host",
+    "statusFilter": "Status Filter",
+    "tagsPlaceholder": "Enter tags and press enter",
+    "nameRequired": "Please enter server name",
+    "hostRequired": "Please enter host address",
+    "portRequired": "Please enter port",
+    "sshUsernameRequired": "Please enter SSH username",
+    "deleteConfirm": "Are you sure to delete this server?",
+    "detailTitle": "Server Detail"
   },
-  "metrics": {
-    "cpu": "CPU Usage",
-    "memory": "Memory Usage",
-    "disk": "Disk Usage",
-    "network": "Network Traffic",
-    "uptime": "Uptime",
-    "loadAverage": "Load Average"
+  "monitoring": {
+    "title": "Monitoring Dashboard",
+    "description": "Real-time server performance monitoring including CPU, memory, disk, network, etc."
+  },
+  "execute": {
+    "title": "Command Execution",
+    "description": "Execute commands on servers, support single and batch execution"
   },
   "chat": {
-    "title": "AI Chat Assistant",
-    "placeholder": "Type a message...",
-    "send": "Send",
-    "clear": "Clear History",
-    "selectServer": "Select Server",
-    "noServerSelected": "No server selected"
+    "title": "AI Assistant",
+    "description": "Chat with AI assistant to manage your servers using natural language"
+  },
+  "permissions": {
+    "title": "Permission Management",
+    "description": "Manage user access permissions to servers"
+  },
+  "profile": {
+    "title": "User Profile",
+    "description": "View and edit profile, change password"
+  },
+  "notFound": {
+    "message": "Page Not Found",
+    "goHome": "Go Home"
   }
 }

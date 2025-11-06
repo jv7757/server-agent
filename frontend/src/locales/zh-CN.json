@@ -15,70 +15,97 @@
     "success": "成功",
     "error": "错误",
     "warning": "警告",
-    "info": "信息"
+    "info": "信息",
+    "actions": "操作",
+    "comingSoon": "即将推出",
+    "featureInDevelopment": "此功能正在开发中，敬请期待！"
   },
-  "auth": {
-    "login": "登录",
-    "register": "注册",
-    "logout": "登出",
+  "login": {
+    "title": "登录",
     "username": "用户名",
     "password": "密码",
-    "email": "邮箱",
-    "fullName": "全名",
-    "rememberMe": "记住我",
-    "forgotPassword": "忘记密码？",
+    "usernamePlaceholder": "请输入用户名",
+    "passwordPlaceholder": "请输入密码",
+    "loginButton": "登录",
     "noAccount": "还没有账号？",
+    "registerLink": "立即注册",
+    "usernameRequired": "请输入用户名",
+    "passwordRequired": "请输入密码",
+    "passwordMinLength": "密码长度至少6位"
+  },
+  "register": {
+    "title": "注册",
+    "username": "用户名",
+    "email": "邮箱",
+    "password": "密码",
+    "confirmPassword": "确认密码",
+    "usernamePlaceholder": "请输入用户名",
+    "emailPlaceholder": "请输入邮箱",
+    "passwordPlaceholder": "请输入密码",
+    "confirmPasswordPlaceholder": "请再次输入密码",
+    "registerButton": "注册",
     "hasAccount": "已有账号？",
-    "loginSuccess": "登录成功",
-    "logoutSuccess": "登出成功",
-    "registerSuccess": "注册成功"
+    "loginLink": "立即登录",
+    "usernameRequired": "请输入用户名",
+    "usernameLength": "用户名长度3-20位",
+    "emailRequired": "请输入邮箱",
+    "emailInvalid": "邮箱格式不正确",
+    "passwordRequired": "请输入密码",
+    "passwordMinLength": "密码长度至少8位",
+    "confirmPasswordRequired": "请确认密码",
+    "passwordMismatch": "两次密码输入不一致"
   },
-  "nav": {
-    "dashboard": "仪表盘",
-    "servers": "服务器管理",
-    "monitoring": "监控面板",
-    "chat": "AI助手",
-    "profile": "个人资料",
-    "users": "用户管理",
-    "auditLogs": "审计日志",
-    "settings": "设置"
+  "layout": {
+    "profile": "个人中心",
+    "logout": "退出登录"
   },
-  "server": {
-    "list": "服务器列表",
-    "detail": "服务器详情",
-    "add": "添加服务器",
+  "servers": {
+    "title": "服务器管理",
+    "create": "创建服务器",
     "edit": "编辑服务器",
-    "delete": "删除服务器",
+    "delete": "删除",
     "name": "服务器名称",
     "host": "主机地址",
     "port": "端口",
     "status": "状态",
-    "online": "在线",
-    "offline": "离线",
-    "unknown": "未知",
-    "description": "描述",
     "tags": "标签",
     "sshUsername": "SSH用户名",
     "sshPassword": "SSH密码",
-    "sshKey": "SSH密钥",
-    "testConnection": "测试连接",
-    "connectionSuccess": "连接成功",
-    "connectionFailed": "连接失败"
+    "description": "描述",
+    "createdAt": "创建时间",
+    "test": "测试连接",
+    "searchPlaceholder": "搜索服务器名称或主机地址",
+    "statusFilter": "状态筛选",
+    "tagsPlaceholder": "输入标签后按回车",
+    "nameRequired": "请输入服务器名称",
+    "hostRequired": "请输入主机地址",
+    "portRequired": "请输入端口",
+    "sshUsernameRequired": "请输入SSH用户名",
+    "deleteConfirm": "确定要删除此服务器吗？",
+    "detailTitle": "服务器详情"
   },
-  "metrics": {
-    "cpu": "CPU使用率",
-    "memory": "内存使用率",
-    "disk": "磁盘使用率",
-    "network": "网络流量",
-    "uptime": "运行时间",
-    "loadAverage": "平均负载"
+  "monitoring": {
+    "title": "监控面板",
+    "description": "实时监控服务器性能指标，包括CPU、内存、磁盘、网络等"
+  },
+  "execute": {
+    "title": "命令执行",
+    "description": "在服务器上执行命令，支持单机执行和批量执行"
   },
   "chat": {
-    "title": "AI聊天助手",
-    "placeholder": "输入消息...",
-    "send": "发送",
-    "clear": "清空历史",
-    "selectServer": "选择服务器",
-    "noServerSelected": "未选择服务器"
+    "title": "AI 助手",
+    "description": "通过自然语言与AI助手对话，管理您的服务器"
+  },
+  "permissions": {
+    "title": "权限管理",
+    "description": "管理用户对服务器的访问权限"
+  },
+  "profile": {
+    "title": "个人中心",
+    "description": "查看和编辑个人资料，修改密码"
+  },
+  "notFound": {
+    "message": "页面不存在",
+    "goHome": "返回首页"
   }
 }
