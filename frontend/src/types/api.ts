@@ -191,7 +191,7 @@ export interface ChatResponse {
 }
 
 export interface ChatMessage {
-  id: number
+  id: string
   role: 'user' | 'assistant'
   content: string
   created_at: string

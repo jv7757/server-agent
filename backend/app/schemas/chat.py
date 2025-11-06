@@ -41,7 +41,7 @@ class ChatResponse(BaseModel):
 class ChatMessageResponse(BaseModel):
     """单条聊天消息响应"""
 
-    id: int
+    id: str
     role: str
     content: str
     created_at: datetime
