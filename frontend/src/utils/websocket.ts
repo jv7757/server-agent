@@ -136,7 +136,23 @@ export class WebSocketClient {
 export function createWebSocket(path: string, options?: WebSocketOptions): WebSocketClient {
   // 构建WebSocket URL
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-  const host = import.meta.env.VITE_API_BASE_URL?.replace(/^https?:\/\//, '') || 'localhost:8000'
+
+  // 使用专门的WebSocket URL配置，或者从API URL中提取host
+  let host: string
+  const wsUrl = import.meta.env.VITE_WS_URL
+  const apiUrl = import.meta.env.VITE_API_BASE_URL
+
+  if (wsUrl) {
+    // 如果配置了WebSocket URL，直接使用
+    host = wsUrl.replace(/^wss?:\/\//, '')
+  } else if (apiUrl) {
+    // 从API URL中提取host（去掉协议和路径）
+    host = apiUrl.replace(/^https?:\/\//, '').replace(/\/.*$/, '')
+  } else {
+    // 默认值
+    host = 'localhost:8000'
+  }
+
   const url = `${protocol}//${host}${path}`
 
   return new WebSocketClient(url, options)
