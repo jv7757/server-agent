@@ -38,6 +38,20 @@ from app.schemas.metric import (
     MetricsSummaryParams,
     MetricsSummaryResponse,
 )
+from app.schemas.permission import (
+    AccessibleServersResponse,
+    PermissionCheck,
+    PermissionCheckResponse,
+    PermissionGrant,
+    PermissionGrantResponse,
+    PermissionResponse,
+    PermissionRevoke,
+    PermissionRevokeResponse,
+    ServerPermissionItem,
+    ServerPermissionListResponse,
+    UserPermissionItem,
+    UserPermissionListResponse,
+)
 from app.schemas.server import (
     ConnectionTestResponse,
     ServerCreate,
@@ -113,4 +127,17 @@ __all__ = [
     "ConversationListItem",
     "ConversationListResponse",
     "ConversationDeleteResponse",
+    # Permission
+    "PermissionGrant",
+    "PermissionRevoke",
+    "PermissionCheck",
+    "PermissionResponse",
+    "PermissionGrantResponse",
+    "PermissionRevokeResponse",
+    "PermissionCheckResponse",
+    "UserPermissionItem",
+    "UserPermissionListResponse",
+    "ServerPermissionItem",
+    "ServerPermissionListResponse",
+    "AccessibleServersResponse",
 ]
