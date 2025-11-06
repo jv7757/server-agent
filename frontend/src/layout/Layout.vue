@@ -107,6 +107,11 @@ import {
   Expand,
   User,
   SwitchButton,
+  Server,
+  Console,
+  Operation,
+  ChatDotRound,
+  Key,
 } from '@element-plus/icons-vue'
 import { Guide as Globe } from '@element-plus/icons-vue'
 
