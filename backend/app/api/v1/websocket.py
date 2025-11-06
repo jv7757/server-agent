@@ -247,8 +247,7 @@ async def monitoring_websocket(
             try:
                 # 获取当前监控数据
                 metrics = await metrics_service.get_current_metrics(
-                    server_id=server_id,
-                    user_id=current_user.id
+                    server_id=server_id
                 )
 
                 if metrics:
@@ -256,25 +255,25 @@ async def monitoring_websocket(
                         "type": "metrics",
                         "data": {
                             "cpu": {
-                                "usage": metrics.get("cpu_usage_percent", 0),
-                                "cores": metrics.get("cpu_cores", 0),
+                                "usage": metrics.cpu_usage_percent or 0,
+                                "cores": metrics.cpu_cores or 0,
                             },
                             "memory": {
-                                "usage": metrics.get("memory_usage_percent", 0),
-                                "total": metrics.get("memory_total_mb", 0),
-                                "used": metrics.get("memory_used_mb", 0),
+                                "usage": metrics.memory_usage_percent or 0,
+                                "total": metrics.memory_total_mb or 0,
+                                "used": metrics.memory_used_mb or 0,
                             },
                             "disk": {
-                                "usage": metrics.get("disk_usage_percent", 0),
-                                "total": metrics.get("disk_total_gb", 0),
-                                "used": metrics.get("disk_used_gb", 0),
+                                "usage": metrics.disk_usage_percent or 0,
+                                "total": metrics.disk_total_gb or 0,
+                                "used": metrics.disk_used_gb or 0,
                             },
                             "network": {
-                                "bytes_sent": metrics.get("network_bytes_sent", 0),
-                                "bytes_recv": metrics.get("network_bytes_recv", 0),
+                                "bytes_sent": metrics.network_bytes_sent or 0,
+                                "bytes_recv": metrics.network_bytes_recv or 0,
                             },
-                            "uptime": metrics.get("uptime_seconds", 0),
-                            "timestamp": metrics.get("collected_at"),
+                            "uptime": metrics.uptime_seconds or 0,
+                            "timestamp": metrics.collected_at.isoformat() if metrics.collected_at else None,
                         }
                     })
 
