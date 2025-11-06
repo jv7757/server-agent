@@ -9,6 +9,16 @@ from app.schemas.auth import (
     TokenPayload,
     TokenResponse,
 )
+from app.schemas.chat import (
+    ChatMessagesResponse,
+    ChatMessageResponse,
+    ChatRequest,
+    ChatResponse,
+    ChatStreamRequest,
+    ConversationDeleteResponse,
+    ConversationListItem,
+    ConversationListResponse,
+)
 from app.schemas.execute import (
     BatchCommandRequest,
     BatchCommandResponse,
@@ -94,4 +104,13 @@ __all__ = [
     "BatchCommandRequest",
     "BatchCommandResponse",
     "BatchCommandResult",
+    # Chat
+    "ChatRequest",
+    "ChatResponse",
+    "ChatStreamRequest",
+    "ChatMessageResponse",
+    "ChatMessagesResponse",
+    "ConversationListItem",
+    "ConversationListResponse",
+    "ConversationDeleteResponse",
 ]
