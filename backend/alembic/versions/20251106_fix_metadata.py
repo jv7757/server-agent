@@ -1,7 +1,7 @@
 """Fix ChatHistory metadata column name
 
 Revision ID: 20251106_fix_metadata
-Revises: 20251105_000001_initial_migration
+Revises: 20251105_000001
 Create Date: 2025-11-06
 
 """
@@ -11,7 +11,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = '20251106_fix_metadata'
-down_revision = '20251105_000001_initial_migration'
+down_revision = '20251105_000001'
 branch_labels = None
 depends_on = None
 
