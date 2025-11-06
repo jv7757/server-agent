@@ -28,7 +28,8 @@ export const useExecuteStore = defineStore('execute', () => {
   const execute = async (data: CommandExecuteRequest): Promise<boolean> => {
     isExecuting.value = true
     try {
-      const result = await executeApi.executeCommand(data)
+      const { server_id, ...requestData } = data
+      const result = await executeApi.executeCommand(server_id, requestData)
       currentResult.value = result
 
       if (result.exit_code === 0) {
@@ -50,21 +51,26 @@ export const useExecuteStore = defineStore('execute', () => {
   /**
    * 验证命令安全性
    */
-  const validate = async (serverId: string, command: string): Promise<boolean> => {
+  const validate = async (command: string): Promise<boolean> => {
     try {
-      const result = await executeApi.validateCommand({
-        server_id: serverId,
-        command,
-      })
+      const result = await executeApi.validateCommand({ command })
 
-      if (!result.is_safe) {
+      if (!result.is_valid || result.risk_level === 'dangerous') {
         ElMessage.warning({
-          message: `危险命令: ${result.reason || '该命令可能具有风险'}`,
+          message: `${result.message || '该命令可能具有风险'}`,
           duration: 5000,
+        })
+        return false
+      }
+
+      if (result.risk_level === 'warning') {
+        ElMessage.warning({
+          message: result.message || '该命令需要谨慎执行',
+          duration: 3000,
         })
       }
 
-      return result.is_safe
+      return result.is_valid
     } catch (error) {
       console.error('命令验证失败:', error)
       return false
@@ -120,20 +126,6 @@ export const useExecuteStore = defineStore('execute', () => {
   }
 
   /**
-   * 获取命令详情
-   */
-  const fetchDetail = async (auditId: number): Promise<CommandHistory | null> => {
-    try {
-      const detail = await executeApi.getCommandDetail(auditId)
-      return detail
-    } catch (error) {
-      console.error('获取命令详情失败:', error)
-      ElMessage.error('获取命令详情失败')
-      return null
-    }
-  }
-
-  /**
    * 清除当前结果
    */
   const clearResult = () => {
@@ -152,7 +144,6 @@ export const useExecuteStore = defineStore('execute', () => {
     validate,
     executeBatch,
     fetchHistory,
-    fetchDetail,
     clearResult,
   }
 })

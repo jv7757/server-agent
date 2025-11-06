@@ -135,17 +135,20 @@ export interface MetricsSummary {
 // ========== 命令执行 ==========
 
 export interface CommandExecuteRequest {
-  server_id: string
+  server_id: string // For frontend use, extracted before API call
   command: string
   timeout?: number
+  allow_dangerous?: boolean
+  skip_confirmation?: boolean
 }
 
 export interface CommandExecuteResponse {
-  success: boolean
+  command: string
+  exit_code: number
   stdout: string
   stderr: string
-  exit_code: number
-  execution_time: number
+  execution_time_ms: number
+  executed_at: string
 }
 
 export interface CommandValidateRequest {
@@ -153,23 +156,23 @@ export interface CommandValidateRequest {
 }
 
 export interface CommandValidateResponse {
-  is_safe: boolean
-  is_dangerous: boolean
-  message: string
+  command: string
+  is_valid: boolean
+  risk_level: string // safe, warning, dangerous
+  message?: string
+  requires_confirmation: boolean
 }
 
 export interface CommandHistory {
   id: number
-  user_id: string
   server_id: string
+  server_name: string
   command: string
-  success: boolean
-  stdout: string
-  stderr: string
-  exit_code: number
-  execution_time: number
-  ip_address?: string
-  created_at: string
+  exit_code: number | null
+  execution_time_ms: number | null
+  executed_at: string
+  user_id: string
+  username: string
 }
 
 // ========== AI 聊天 ==========

@@ -64,12 +64,8 @@
               </el-text>
             </el-form-item>
 
-            <el-form-item :label="$t('execute.workingDirectory')">
-              <el-input v-model="executeForm.working_directory" />
-            </el-form-item>
-
             <el-form-item>
-              <el-checkbox v-model="executeForm.sudo">
+              <el-checkbox v-model="executeForm.allow_dangerous">
                 {{ $t('execute.useSudo') }}
               </el-checkbox>
             </el-form-item>
@@ -121,39 +117,39 @@
 
       <div class="result-content">
         <!-- 标准输出 -->
-        <div v-if="executeStore.currentResult.output" class="output-section">
+        <div v-if="executeStore.currentResult.stdout" class="output-section">
           <div class="output-header">
             <el-text type="success">{{ $t('execute.stdout') }}</el-text>
             <el-button
               link
               :icon="CopyDocument"
-              @click="copyToClipboard(executeStore.currentResult.output)"
+              @click="copyToClipboard(executeStore.currentResult.stdout)"
             >
               {{ $t('common.copy') }}
             </el-button>
           </div>
-          <pre class="output-pre">{{ executeStore.currentResult.output }}</pre>
+          <pre class="output-pre">{{ executeStore.currentResult.stdout }}</pre>
         </div>
 
         <!-- 标准错误 -->
-        <div v-if="executeStore.currentResult.error_output" class="output-section">
+        <div v-if="executeStore.currentResult.stderr" class="output-section">
           <div class="output-header">
             <el-text type="danger">{{ $t('execute.stderr') }}</el-text>
             <el-button
               link
               :icon="CopyDocument"
-              @click="copyToClipboard(executeStore.currentResult.error_output)"
+              @click="copyToClipboard(executeStore.currentResult.stderr)"
             >
               {{ $t('common.copy') }}
             </el-button>
           </div>
-          <pre class="output-pre error">{{ executeStore.currentResult.error_output }}</pre>
+          <pre class="output-pre error">{{ executeStore.currentResult.stderr }}</pre>
         </div>
 
         <!-- 执行信息 -->
         <el-descriptions :column="2" border size="small" class="result-meta">
           <el-descriptions-item :label="$t('execute.executionTime')">
-            {{ executeStore.currentResult.execution_time?.toFixed(2) }}s
+            {{ (executeStore.currentResult.execution_time_ms / 1000).toFixed(2) }}s
           </el-descriptions-item>
           <el-descriptions-item :label="$t('execute.timestamp')">
             {{ formatDate(executeStore.currentResult.executed_at) }}
@@ -185,17 +181,17 @@
         stripe
         style="width: 100%"
       >
-        <el-table-column prop="action" :label="$t('execute.command')" min-width="200">
+        <el-table-column prop="command" :label="$t('execute.command')" min-width="200">
           <template #default="{ row }">
             <el-text class="command-text" truncated>
-              {{ getCommandFromDetails(row) }}
+              {{ row.command }}
             </el-text>
           </template>
         </el-table-column>
 
-        <el-table-column prop="resource_type" :label="$t('execute.server')" width="150">
+        <el-table-column prop="server_name" :label="$t('execute.server')" width="150">
           <template #default="{ row }">
-            {{ getServerNameFromDetails(row) }}
+            {{ row.server_name }}
           </template>
         </el-table-column>
 
@@ -207,9 +203,9 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="created_at" :label="$t('common.time')" width="180">
+        <el-table-column prop="executed_at" :label="$t('common.time')" width="180">
           <template #default="{ row }">
-            {{ formatDate(row.created_at) }}
+            {{ formatDate(row.executed_at) }}
           </template>
         </el-table-column>
 
@@ -243,23 +239,25 @@
       destroy-on-close
     >
       <el-descriptions v-if="currentDetail" :column="1" border>
+        <el-descriptions-item :label="$t('execute.server')">
+          {{ currentDetail.server_name }}
+        </el-descriptions-item>
         <el-descriptions-item :label="$t('execute.command')">
-          <pre>{{ getCommandFromDetails(currentDetail) }}</pre>
-        </el-descriptions-item>
-        <el-descriptions-item :label="$t('execute.stdout')">
-          <pre class="detail-output">{{ currentDetail.details?.output || 'N/A' }}</pre>
-        </el-descriptions-item>
-        <el-descriptions-item :label="$t('execute.stderr')">
-          <pre class="detail-output error">{{ currentDetail.details?.error_output || 'N/A' }}</pre>
+          <pre>{{ currentDetail.command }}</pre>
         </el-descriptions-item>
         <el-descriptions-item :label="$t('execute.exitCode')">
-          {{ currentDetail.details?.exit_code }}
+          <el-tag :type="getStatusType(currentDetail)" size="small">
+            {{ currentDetail.exit_code ?? 'N/A' }}
+          </el-tag>
         </el-descriptions-item>
         <el-descriptions-item :label="$t('execute.executionTime')">
-          {{ currentDetail.details?.execution_time?.toFixed(2) }}s
+          {{ currentDetail.execution_time_ms ? (currentDetail.execution_time_ms / 1000).toFixed(2) + 's' : 'N/A' }}
         </el-descriptions-item>
         <el-descriptions-item :label="$t('common.time')">
-          {{ formatDate(currentDetail.created_at) }}
+          {{ formatDate(currentDetail.executed_at) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="$t('execute.server') + ' ID'">
+          {{ currentDetail.server_id }}
         </el-descriptions-item>
       </el-descriptions>
     </el-dialog>
@@ -293,8 +291,8 @@ const executeForm = ref<CommandExecuteRequest>({
   server_id: '',
   command: '',
   timeout: 30,
-  working_directory: undefined,
-  sudo: false,
+  allow_dangerous: false,
+  skip_confirmation: false,
 })
 
 const advancedOpen = ref<string[]>([])
@@ -332,12 +330,9 @@ const handleExecute = async () => {
 }
 
 const handleValidate = async () => {
-  const isSafe = await executeStore.validate(
-    executeForm.value.server_id,
-    executeForm.value.command
-  )
+  const isValid = await executeStore.validate(executeForm.value.command)
 
-  if (isSafe) {
+  if (isValid) {
     ElMessage.success(t('execute.commandSafe'))
   }
 }
@@ -351,12 +346,9 @@ const loadHistory = async () => {
   await executeStore.fetchHistory(currentPage.value, pageSize.value)
 }
 
-const handleViewDetail = async (row: CommandHistory) => {
-  const detail = await executeStore.fetchDetail(row.id)
-  if (detail) {
-    currentDetail.value = detail
-    detailVisible.value = true
-  }
+const handleViewDetail = (row: CommandHistory) => {
+  currentDetail.value = row
+  detailVisible.value = true
 }
 
 const copyToClipboard = async (text: string) => {
@@ -372,23 +364,15 @@ const formatDate = (date: string) => {
   return new Date(date).toLocaleString()
 }
 
-const getCommandFromDetails = (row: CommandHistory) => {
-  return row.details?.command || row.action || 'N/A'
-}
-
-const getServerNameFromDetails = (row: CommandHistory) => {
-  return row.details?.server_name || 'N/A'
-}
-
 const getStatusType = (row: CommandHistory) => {
-  const exitCode = row.details?.exit_code
-  if (exitCode === undefined) return 'info'
+  const exitCode = row.exit_code
+  if (exitCode === null || exitCode === undefined) return 'info'
   return exitCode === 0 ? 'success' : 'danger'
 }
 
 const getStatusText = (row: CommandHistory) => {
-  const exitCode = row.details?.exit_code
-  if (exitCode === undefined) return t('common.unknown')
+  const exitCode = row.exit_code
+  if (exitCode === null || exitCode === undefined) return t('common.unknown')
   return exitCode === 0 ? t('common.success') : t('common.failed')
 }
 

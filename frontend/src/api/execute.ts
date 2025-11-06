@@ -19,8 +19,8 @@ interface CommandHistoryParams extends PaginationParams {
 /**
  * 执行命令
  */
-export const executeCommand = (data: CommandExecuteRequest) => {
-  return post<CommandExecuteResponse>('/execute/command', data)
+export const executeCommand = (serverId: string, data: CommandExecuteRequest) => {
+  return post<CommandExecuteResponse>(`/execute/servers/${serverId}`, data)
 }
 
 /**
@@ -46,11 +46,4 @@ export const executeBatch = (serverIds: string[], command: string, timeout?: num
  */
 export const getCommandHistory = (params?: CommandHistoryParams) => {
   return get<PaginatedResponse<CommandHistory>>('/execute/history', { params })
-}
-
-/**
- * 获取命令详情
- */
-export const getCommandDetail = (auditId: number) => {
-  return get<CommandHistory>(`/execute/history/${auditId}`)
 }

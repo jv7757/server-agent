@@ -262,7 +262,6 @@ const handleSend = async () => {
 
   const success = await chatStore.sendMessage({
     message,
-    server_id: selectedServerId.value,
     conversation_id: chatStore.currentConversationId || undefined,
   })
 
