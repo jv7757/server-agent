@@ -23,7 +23,7 @@ export const useChatStore = defineStore('chat', () => {
 
   // Getters
   const currentConversation = computed(() => {
-    return conversations.value.find((c) => c.id === currentConversationId.value)
+    return conversations.value.find((c) => c.conversation_id === currentConversationId.value)
   })
 
   const hasMessages = computed(() => messages.value.length > 0)
@@ -121,7 +121,7 @@ export const useChatStore = defineStore('chat', () => {
       await chatApi.deleteConversation(conversationId)
 
       // 从列表中移除
-      conversations.value = conversations.value.filter((c) => c.id !== conversationId)
+      conversations.value = conversations.value.filter((c) => c.conversation_id !== conversationId)
 
       // 如果删除的是当前会话，清空消息
       if (currentConversationId.value === conversationId) {

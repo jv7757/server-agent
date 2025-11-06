@@ -18,17 +18,17 @@
         <el-scrollbar class="conversation-list">
           <div
             v-for="conv in chatStore.conversations"
-            :key="conv.id"
+            :key="conv.conversation_id"
             class="conversation-item"
-            :class="{ active: conv.id === chatStore.currentConversationId }"
-            @click="handleLoadConversation(conv.id)"
+            :class="{ active: conv.conversation_id === chatStore.currentConversationId }"
+            @click="handleLoadConversation(conv.conversation_id)"
           >
             <div class="conv-content">
               <div class="conv-title">
-                {{  conv.title || $t('chat.untitled') }}
+                {{ truncateText(conv.last_message, 30) || $t('chat.untitled') }}
               </div>
               <div class="conv-time">
-                {{ formatDate(conv.created_at) }}
+                {{ formatDate(conv.last_message_at) }}
               </div>
             </div>
             <el-button
@@ -36,7 +36,7 @@
               :icon="Delete"
               type="danger"
               size="small"
-              @click.stop="handleDeleteConversation(conv.id)"
+              @click.stop="handleDeleteConversation(conv.conversation_id)"
             />
           </div>
 
@@ -292,6 +292,12 @@ const renderMarkdown = (text: string): string => {
   } catch {
     return text
   }
+}
+
+const truncateText = (text: string, maxLength: number): string => {
+  if (!text) return ''
+  if (text.length <= maxLength) return text
+  return text.substring(0, maxLength) + '...'
 }
 
 const formatDate = (date: string) => {
