@@ -9,6 +9,17 @@ from app.schemas.auth import (
     TokenPayload,
     TokenResponse,
 )
+from app.schemas.execute import (
+    BatchCommandRequest,
+    BatchCommandResponse,
+    BatchCommandResult,
+    CommandExecuteRequest,
+    CommandExecuteResponse,
+    CommandHistoryListResponse,
+    CommandHistoryResponse,
+    CommandValidateRequest,
+    CommandValidateResponse,
+)
 from app.schemas.metric import (
     CurrentMetricsResponse,
     MetricResponse,
@@ -73,4 +84,14 @@ __all__ = [
     "MetricsSummaryResponse",
     "MetricsQueryParams",
     "MetricsSummaryParams",
+    # Execute
+    "CommandExecuteRequest",
+    "CommandExecuteResponse",
+    "CommandValidateRequest",
+    "CommandValidateResponse",
+    "CommandHistoryResponse",
+    "CommandHistoryListResponse",
+    "BatchCommandRequest",
+    "BatchCommandResponse",
+    "BatchCommandResult",
 ]

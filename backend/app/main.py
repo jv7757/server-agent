@@ -74,12 +74,12 @@ async def global_exception_handler(request, exc):
 
 
 # 导入并注册路由
-from app.api.v1 import auth, metrics, servers
+from app.api.v1 import auth, execute, metrics, servers
 
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
 app.include_router(servers.router, prefix="/api/v1/servers", tags=["Servers"])
 app.include_router(metrics.router, prefix="/api/v1/metrics", tags=["Metrics"])
-# app.include_router(execute.router, prefix="/api/v1/execute", tags=["Execute"])
+app.include_router(execute.router, prefix="/api/v1/execute", tags=["Command Execution"])
 # app.include_router(chat.router, prefix="/api/v1/chat", tags=["Chat"])
 
 
