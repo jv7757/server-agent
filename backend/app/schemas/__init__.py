@@ -1,5 +1,5 @@
 """
-Pydantic!!W
+Pydantic模式模块
 """
 from app.schemas.auth import (
     LoginRequest,
@@ -8,6 +8,16 @@ from app.schemas.auth import (
     RefreshTokenResponse,
     TokenPayload,
     TokenResponse,
+)
+from app.schemas.server import (
+    ConnectionTestResponse,
+    ServerCreate,
+    ServerDetailResponse,
+    ServerListResponse,
+    ServerQueryParams,
+    ServerResponse,
+    ServerUpdate,
+    SystemInfoResponse,
 )
 from app.schemas.user import (
     PasswordChange,
@@ -39,4 +49,13 @@ __all__ = [
     "UserListResponse",
     "PasswordChange",
     "PasswordReset",
+    # Server
+    "ServerCreate",
+    "ServerUpdate",
+    "ServerResponse",
+    "ServerDetailResponse",
+    "ServerListResponse",
+    "ServerQueryParams",
+    "ConnectionTestResponse",
+    "SystemInfoResponse",
 ]
