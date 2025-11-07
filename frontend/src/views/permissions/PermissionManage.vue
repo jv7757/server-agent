@@ -217,7 +217,7 @@ const getPermissionLabel = (permission: string) => {
 // 获取服务器列表
 const fetchServers = async () => {
   try {
-    const response = await getServers({ page: 1, size: 1000 })
+    const response = await getServers({ page: 1, size: 100 })
     servers.value = response.items
   } catch (error: any) {
     ElMessage.error('获取服务器列表失败: ' + (error.message || '未知错误'))
@@ -227,7 +227,7 @@ const fetchServers = async () => {
 // 获取用户列表
 const fetchUsers = async () => {
   try {
-    const response = await getUsers({ page: 1, size: 1000 })
+    const response = await getUsers({ page: 1, size: 100 })
     users.value = response.items
   } catch (error: any) {
     // 不是管理员可能无法获取用户列表，静默失败
