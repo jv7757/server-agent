@@ -2,12 +2,23 @@
 
 ## 问题描述
 
+### 问题 1: 缺少权限列
+
 错误信息：
 ```
 Unknown column 'user_server_permissions.can_read' in 'field list'
 ```
 
 这表示数据库中的 `user_server_permissions` 表缺少必需的权限列。
+
+### 问题 2: 存在旧的 permission 字段
+
+错误信息：
+```
+Field 'permission' doesn't have a default value
+```
+
+这表示数据库表中存在一个旧的 `permission` 字段（单数形式），该字段是旧版本的设计，应该被删除。新版本使用 `can_read`, `can_write`, `can_execute`, `can_admin` 四个字段替代。
 
 ## 原因
 
@@ -18,35 +29,69 @@ Unknown column 'user_server_permissions.can_read' in 'field list'
 
 ## 解决方案
 
-### 方案 1: 使用 SQL 脚本修复（推荐）
+### 完整修复步骤（推荐按顺序执行）
 
-1. **连接到你的 MySQL 数据库**：
-   ```bash
-   mysql -u your_username -p your_database_name
-   ```
+#### 步骤 1: 删除旧的 permission 字段
 
-2. **执行简单修复脚本**：
-   ```sql
-   -- 切换到正确的数据库
-   USE your_database_name;
+```bash
+# 连接到你的 MySQL 数据库
+mysql -u your_username -p your_database_name
 
-   -- 添加缺失的列
-   ALTER TABLE user_server_permissions ADD COLUMN can_read TINYINT(1) NOT NULL DEFAULT 0;
-   ALTER TABLE user_server_permissions ADD COLUMN can_write TINYINT(1) NOT NULL DEFAULT 0;
-   ALTER TABLE user_server_permissions ADD COLUMN can_execute TINYINT(1) NOT NULL DEFAULT 0;
-   ALTER TABLE user_server_permissions ADD COLUMN can_admin TINYINT(1) NOT NULL DEFAULT 0;
-   ALTER TABLE user_server_permissions ADD COLUMN granted_by CHAR(36) NULL;
+# 执行删除旧字段
+ALTER TABLE user_server_permissions DROP COLUMN IF EXISTS permission;
+```
 
-   -- 验证表结构
-   DESCRIBE user_server_permissions;
-   ```
+或使用提供的脚本：
+```bash
+mysql -u your_username -p your_database_name < fix_permission_table_remove_old_column.sql
+```
 
-   **注意**：如果某些列已经存在，会报错但不影响其他列的添加。
+#### 步骤 2: 添加新的权限字段
 
-3. **或者使用提供的 SQL 文件**：
-   ```bash
-   mysql -u your_username -p your_database_name < fix_permission_table_simple.sql
-   ```
+```sql
+-- 添加缺失的列
+ALTER TABLE user_server_permissions ADD COLUMN IF NOT EXISTS can_read TINYINT(1) NOT NULL DEFAULT 0;
+ALTER TABLE user_server_permissions ADD COLUMN IF NOT EXISTS can_write TINYINT(1) NOT NULL DEFAULT 0;
+ALTER TABLE user_server_permissions ADD COLUMN IF NOT EXISTS can_execute TINYINT(1) NOT NULL DEFAULT 0;
+ALTER TABLE user_server_permissions ADD COLUMN IF NOT EXISTS can_admin TINYINT(1) NOT NULL DEFAULT 0;
+ALTER TABLE user_server_permissions ADD COLUMN IF NOT EXISTS granted_by CHAR(36) NULL;
+
+-- 验证表结构
+DESCRIBE user_server_permissions;
+```
+
+或使用提供的脚本：
+```bash
+mysql -u your_username -p your_database_name < fix_permission_table_simple.sql
+```
+
+### 快速一键修复（所有问题）
+
+```bash
+# 连接数据库
+mysql -u your_username -p your_database_name
+
+# 执行修复（复制粘贴所有命令）
+USE your_database_name;
+
+-- 1. 删除旧字段
+ALTER TABLE user_server_permissions DROP COLUMN IF EXISTS permission;
+
+-- 2. 添加新字段（忽略已存在的错误）
+ALTER TABLE user_server_permissions ADD COLUMN can_read TINYINT(1) NOT NULL DEFAULT 0;
+ALTER TABLE user_server_permissions ADD COLUMN can_write TINYINT(1) NOT NULL DEFAULT 0;
+ALTER TABLE user_server_permissions ADD COLUMN can_execute TINYINT(1) NOT NULL DEFAULT 0;
+ALTER TABLE user_server_permissions ADD COLUMN can_admin TINYINT(1) NOT NULL DEFAULT 0;
+ALTER TABLE user_server_permissions ADD COLUMN granted_by CHAR(36) NULL;
+
+-- 3. 验证
+DESCRIBE user_server_permissions;
+```
+
+**注意**：
+- `DROP COLUMN IF EXISTS` 在 MySQL 5.7.6+ 支持
+- 添加列时如果已存在会报错，可以忽略
+- 对于 MySQL 5.6，需要先检查列是否存在
 
 ### 方案 2: 使用 Python 脚本修复
 
@@ -112,9 +157,11 @@ DESCRIBE user_server_permissions;
 
 ## 相关文件
 
+- `FIX_PERMISSION_TABLE.md` - 本文档（完整修复指南）
+- `fix_permission_table_remove_old_column.sql` - 删除旧 permission 字段
+- `fix_permission_table_simple.sql` - 完整修复脚本（删除旧字段+添加新字段）
+- `fix_permission_table.sql` - SQL 完整修复脚本（带检查，安全版本）
 - `fix_permission_table.py` - Python 自动修复脚本
-- `fix_permission_table.sql` - SQL 完整修复脚本（带检查）
-- `fix_permission_table_simple.sql` - SQL 简单修复脚本（直接添加）
 - `app/models/permission.py` - 权限模型定义
 - `alembic/versions/20251105_000001_initial_migration.py` - 初始迁移文件
 

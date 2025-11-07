@@ -1,6 +1,10 @@
--- 简单版本：直接添加列（如果列已存在会报错但不影响）
+-- 完整修复脚本：删除旧字段并添加新字段
+-- 适用于 MySQL 5.7.6+
 
--- 添加权限列
+-- 步骤 1: 删除旧的 permission 字段（如果存在）
+ALTER TABLE user_server_permissions DROP COLUMN IF EXISTS permission;
+
+-- 步骤 2: 添加新的权限列（如果列已存在会报错但不影响）
 ALTER TABLE user_server_permissions ADD COLUMN can_read TINYINT(1) NOT NULL DEFAULT 0;
 ALTER TABLE user_server_permissions ADD COLUMN can_write TINYINT(1) NOT NULL DEFAULT 0;
 ALTER TABLE user_server_permissions ADD COLUMN can_execute TINYINT(1) NOT NULL DEFAULT 0;
