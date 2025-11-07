@@ -26,6 +26,7 @@ celery_app.conf.update(
     task_soft_time_limit=240,  # 4分钟软超时
     worker_prefetch_multiplier=1,
     worker_max_tasks_per_child=1000,
+    broker_connection_retry_on_startup=True,  # Celery 6.0+ 兼容性配置
 )
 
 # 配置定时任务
