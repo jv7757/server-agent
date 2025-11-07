@@ -7,11 +7,11 @@ from jose import jwt
 from app.core.security import (
     create_access_token,
     create_refresh_token,
+    decode_token,
     decrypt_ssh_credential,
     encrypt_ssh_credential,
     get_password_hash,
     verify_password,
-    verify_token,
 )
 from app.config import settings
 
@@ -114,20 +114,23 @@ class TestJWTTokens:
         data = {"sub": "test_user"}
         token = create_access_token(data)
 
-        payload = verify_token(token)
+        payload = decode_token(token)
         assert payload is not None
         assert payload.get("sub") == "test_user"
 
     def test_verify_invalid_token(self):
         """测试验证无效令牌"""
+        from jose import JWTError
+
         invalid_token = "invalid.token.here"
 
-        payload = verify_token(invalid_token)
-        assert payload is None
+        with pytest.raises(JWTError):
+            decode_token(invalid_token)
 
     def test_verify_expired_token(self):
         """测试验证过期令牌"""
         from datetime import timedelta
+        from jose import JWTError
 
         data = {"sub": "test_user"}
         # 创建已过期的令牌
@@ -137,8 +140,8 @@ class TestJWTTokens:
         import time
         time.sleep(0.1)
 
-        payload = verify_token(token)
-        assert payload is None
+        with pytest.raises(JWTError):
+            decode_token(token)
 
     def test_token_with_additional_claims(self):
         """测试包含额外声明的令牌"""
@@ -250,6 +253,8 @@ class TestTokenSecurity:
 
     def test_token_cannot_be_forged(self):
         """测试令牌无法伪造"""
+        from jose import JWTError
+
         data = {"sub": "test_user"}
         token = create_access_token(data)
 
@@ -257,8 +262,8 @@ class TestTokenSecurity:
         tampered_token = token[:-10] + "tampered!!"
 
         # 验证应该失败
-        payload = verify_token(tampered_token)
-        assert payload is None
+        with pytest.raises(JWTError):
+            decode_token(tampered_token)
 
     def test_token_with_wrong_secret(self):
         """测试使用错误密钥验证令牌"""
