@@ -13,7 +13,10 @@ tests/
 ├── README.md                # 本文档
 ├── test_api_auth.py         # 认证API测试
 ├── test_api_servers.py      # 服务器管理API测试
-└── test_api_permissions.py  # 权限管理API测试
+├── test_api_permissions.py  # 权限管理API测试
+├── test_api_users.py        # 用户管理API测试
+├── test_api_audit_logs.py   # 审计日志API测试
+└── test_security.py         # 安全工具函数单元测试
 ```
 
 ## 安装依赖
@@ -42,6 +45,15 @@ pytest tests/test_api_servers.py
 
 # 权限管理测试
 pytest tests/test_api_permissions.py
+
+# 用户管理测试
+pytest tests/test_api_users.py
+
+# 审计日志测试
+pytest tests/test_api_audit_logs.py
+
+# 安全工具函数测试
+pytest tests/test_security.py
 ```
 
 ### 运行特定标记的测试
@@ -58,6 +70,15 @@ pytest -m auth
 
 # 只运行权限相关测试
 pytest -m permission
+
+# 只运行用户管理相关测试
+pytest -m users
+
+# 只运行审计日志相关测试
+pytest -m audit
+
+# 只运行安全相关测试
+pytest -m security
 ```
 
 ### 运行特定的测试类或函数
@@ -167,7 +188,11 @@ pytest -n 4
 - `@pytest.mark.execute`: 命令执行测试
 - `@pytest.mark.chat`: AI聊天测试
 - `@pytest.mark.permission`: 权限管理测试
+- `@pytest.mark.users`: 用户管理测试
+- `@pytest.mark.audit`: 审计日志测试
+- `@pytest.mark.security`: 安全和加密测试
 - `@pytest.mark.slow`: 慢速测试（可以跳过）
+- `@pytest.mark.skip_ci`: 在CI环境中跳过
 
 ## 编写新测试
 
