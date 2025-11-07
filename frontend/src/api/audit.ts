@@ -1,7 +1,7 @@
 /**
  * 审计日志 API
  */
-import { get } from './client'
+import { get } from './request'
 import type { PaginatedResponse, PaginationParams } from '@/types/api'
 
 export interface AuditLog {

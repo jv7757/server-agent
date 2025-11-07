@@ -1,7 +1,7 @@
 /**
  * 用户管理 API（管理员）
  */
-import { get, post, put, del } from './client'
+import { get, post, put, del } from './request'
 import type { PaginatedResponse, PaginationParams } from '@/types/api'
 
 export interface User {
