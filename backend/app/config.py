@@ -27,7 +27,14 @@ class Settings(BaseSettings):
     # 数据库配置
     database_type: Literal["postgresql", "mysql"] = "postgresql"
     database_url: str
-    redis_url: str = "redis://localhost:6379/0"
+
+    # Redis配置
+    redis_host: str = "localhost"
+    redis_port: int = 6379
+    redis_password: str | None = None
+    redis_db: int = 0
+    redis_celery_broker_db: int = 1
+    redis_celery_result_db: int = 2
 
     # JWT配置
     secret_key: str
@@ -45,9 +52,6 @@ class Settings(BaseSettings):
     anthropic_api_key: str | None = None
     ollama_base_url: str = "http://localhost:11434"
 
-    # Celery配置
-    celery_broker_url: str = "redis://localhost:6379/1"
-    celery_result_backend: str = "redis://localhost:6379/2"
 
     # CORS配置
     allowed_origins: str = "http://localhost:5173"
@@ -82,6 +86,27 @@ class Settings(BaseSettings):
     # 分页配置
     default_page_size: int = 20
     max_page_size: int = 100
+
+    def _build_redis_url(self, db: int) -> str:
+        """构建Redis URL"""
+        if self.redis_password:
+            return f"redis://:{self.redis_password}@{self.redis_host}:{self.redis_port}/{db}"
+        return f"redis://{self.redis_host}:{self.redis_port}/{db}"
+
+    @property
+    def redis_url(self) -> str:
+        """应用使用的Redis URL"""
+        return self._build_redis_url(self.redis_db)
+
+    @property
+    def celery_broker_url(self) -> str:
+        """Celery Broker URL"""
+        return self._build_redis_url(self.redis_celery_broker_db)
+
+    @property
+    def celery_result_backend(self) -> str:
+        """Celery Result Backend URL"""
+        return self._build_redis_url(self.redis_celery_result_db)
 
     @property
     def is_production(self) -> bool:
