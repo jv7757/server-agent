@@ -70,6 +70,18 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '权限管理', icon: 'Key', requiresAdmin: true },
       },
       {
+        path: 'users',
+        name: 'Users',
+        component: () => import('@/views/users/UserManage.vue'),
+        meta: { title: '用户管理', icon: 'User', requiresAdmin: true },
+      },
+      {
+        path: 'audit-logs',
+        name: 'AuditLogs',
+        component: () => import('@/views/audit/AuditLogs.vue'),
+        meta: { title: '审计日志', icon: 'Document', requiresAdmin: true },
+      },
+      {
         path: 'profile',
         name: 'Profile',
         component: () => import('@/views/profile/UserProfile.vue'),

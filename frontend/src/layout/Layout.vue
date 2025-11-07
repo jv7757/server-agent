@@ -112,6 +112,7 @@ import {
   Operation,
   ChatDotRound,
   Key,
+  Document,
 } from '@element-plus/icons-vue'
 import { Guide as Globe } from '@element-plus/icons-vue'
 
