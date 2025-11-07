@@ -7,16 +7,17 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import NullPool
 
 from app.config import settings
 
 # 创建异步数据库引擎
+# 注意：使用 NullPool 以避免 Celery worker 进程间的连接池问题
 engine = create_async_engine(
     settings.database_url,
     echo=settings.debug,
     pool_pre_ping=True,
-    pool_size=10,
-    max_overflow=20,
+    poolclass=NullPool,  # 使用 NullPool 避免 fork 问题
 )
 
 # 创建异步会话工厂
@@ -65,3 +66,25 @@ async def init_db() -> None:
 async def close_db() -> None:
     """关闭数据库连接"""
     await engine.dispose()
+
+
+def get_celery_async_session():
+    """
+    为 Celery 任务创建独立的异步数据库会话
+
+    使用 NullPool 确保每次都创建新连接，避免事件循环冲突
+    """
+    celery_engine = create_async_engine(
+        settings.database_url,
+        echo=settings.debug,
+        pool_pre_ping=True,
+        poolclass=NullPool,  # 关键：不使用连接池
+    )
+
+    return sessionmaker(
+        celery_engine,
+        class_=AsyncSession,
+        expire_on_commit=False,
+        autocommit=False,
+        autoflush=False,
+    )

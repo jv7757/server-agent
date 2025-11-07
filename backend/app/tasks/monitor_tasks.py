@@ -6,7 +6,7 @@ import asyncio
 from sqlalchemy import select
 
 from app.config import settings
-from app.database import AsyncSessionLocal
+from app.database import get_celery_async_session
 from app.models.server import Server
 from app.services.metrics_service import MetricsService
 from app.services.ssh_service import SSHService
@@ -31,7 +31,9 @@ def collect_all_servers_metrics():
 
 async def _collect_all_servers_metrics_async():
     """异步采集所有服务器指标"""
-    async with AsyncSessionLocal() as db:
+    # 为每个任务创建独立的会话，避免事件循环冲突
+    CeleryAsyncSession = get_celery_async_session()
+    async with CeleryAsyncSession() as db:
         try:
             # 查询所有激活的服务器
             result = await db.execute(
@@ -128,7 +130,9 @@ def cleanup_old_metrics():
 
 async def _cleanup_old_metrics_async() -> int:
     """异步清理旧指标"""
-    async with AsyncSessionLocal() as db:
+    # 为每个任务创建独立的会话，避免事件循环冲突
+    CeleryAsyncSession = get_celery_async_session()
+    async with CeleryAsyncSession() as db:
         try:
             metrics_service = MetricsService(db)
             deleted_count = await metrics_service.cleanup_old_metrics(
@@ -166,7 +170,9 @@ def collect_server_metrics_by_id(server_id: str):
 
 async def _collect_server_metrics_by_id_async(server_id) -> bool:
     """异步采集指定服务器的指标"""
-    async with AsyncSessionLocal() as db:
+    # 为每个任务创建独立的会话，避免事件循环冲突
+    CeleryAsyncSession = get_celery_async_session()
+    async with CeleryAsyncSession() as db:
         try:
             # 查询服务器
             result = await db.execute(select(Server).where(Server.id == server_id))
