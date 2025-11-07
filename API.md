@@ -7,6 +7,7 @@ Server Management System REST API 文档。
 **基础URL**: `http://localhost:8000`
 **API版本**: v1
 **认证方式**: Bearer Token (JWT)
+**总端点数量**: 42个REST API端点 + 2个WebSocket端点
 
 ## 认证
 
@@ -170,6 +171,26 @@ Authorization: Bearer <access_token>
 ```
 
 **响应**: `200 OK`
+```json
+{
+  "message": "Password changed successfully"
+}
+```
+
+#### 1.7 登出
+
+**POST** `/api/v1/auth/logout`
+
+用户登出（注意：JWT无法在服务端主动失效，客户端应删除本地令牌）。
+
+**认证**: 必需
+
+**响应**: `200 OK`
+```json
+{
+  "message": "Logged out successfully"
+}
+```
 
 ---
 
@@ -531,7 +552,7 @@ Authorization: Bearer <access_token>
 
 **POST** `/api/v1/chat/chat`
 
-发送聊天消息（支持Function Calling）。
+发送聊天消息（支持Function Calling）。AI助手可以执行命令、查询指标等操作。
 
 **认证**: 必需
 
@@ -539,7 +560,8 @@ Authorization: Bearer <access_token>
 ```json
 {
   "message": "列出我的所有服务器",
-  "conversation_id": "uuid"  // 可选
+  "conversation_id": "uuid",  // 可选，不提供则创建新会话
+  "server_id": "uuid"  // 可选，提供后AI可在该服务器上执行操作
 }
 ```
 
@@ -734,6 +756,332 @@ Authorization: Bearer <access_token>
 
 ---
 
+### 7. 用户管理 (User Management) - 仅管理员
+
+所有用户管理接口都需要管理员权限（role="admin"）。
+
+#### 7.1 获取用户列表
+
+**GET** `/api/v1/users`
+
+获取用户列表（支持筛选、搜索、分页）。
+
+**认证**: 必需（需要admin权限）
+
+**查询参数**:
+- `page` (integer): 页码，默认1
+- `size` (integer): 每页数量，默认20，最大100
+- `role` (string): 角色筛选 (admin|user|viewer)
+- `is_active` (boolean): 状态筛选
+- `search` (string): 搜索用户名、邮箱或全名
+
+**响应**: `200 OK`
+```json
+{
+  "total": 50,
+  "page": 1,
+  "size": 20,
+  "items": [
+    {
+      "id": "uuid",
+      "username": "john_doe",
+      "email": "john@example.com",
+      "full_name": "John Doe",
+      "role": "user",
+      "is_active": true,
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z"
+    }
+  ]
+}
+```
+
+#### 7.2 获取用户详情
+
+**GET** `/api/v1/users/{user_id}`
+
+获取单个用户的详细信息。
+
+**认证**: 必需（需要admin权限）
+
+**响应**: `200 OK`
+```json
+{
+  "id": "uuid",
+  "username": "john_doe",
+  "email": "john@example.com",
+  "full_name": "John Doe",
+  "role": "user",
+  "is_active": true,
+  "created_at": "2025-01-01T00:00:00Z",
+  "updated_at": "2025-01-01T00:00:00Z"
+}
+```
+
+#### 7.3 创建用户
+
+**POST** `/api/v1/users`
+
+创建新用户（仅管理员）。
+
+**认证**: 必需（需要admin权限）
+
+**请求体**:
+```json
+{
+  "username": "new_user",
+  "email": "user@example.com",
+  "password": "SecurePass123",
+  "full_name": "New User"
+}
+```
+
+**响应**: `201 Created`
+```json
+{
+  "id": "uuid",
+  "username": "new_user",
+  "email": "user@example.com",
+  "full_name": "New User",
+  "role": "user",
+  "is_active": true,
+  "created_at": "2025-01-01T00:00:00Z",
+  "updated_at": "2025-01-01T00:00:00Z"
+}
+```
+
+#### 7.4 更新用户信息
+
+**PUT** `/api/v1/users/{user_id}`
+
+更新用户信息（可更新邮箱、全名、密码）。
+
+**认证**: 必需（需要admin权限）
+
+**请求体**:
+```json
+{
+  "email": "newemail@example.com",
+  "full_name": "Updated Name",
+  "password": "NewPassword123"  // 可选
+}
+```
+
+**响应**: `200 OK`
+
+#### 7.5 删除用户
+
+**DELETE** `/api/v1/users/{user_id}`
+
+删除用户（会级联删除用户的所有相关数据）。
+
+**认证**: 必需（需要admin权限）
+
+**限制**: 不能删除自己的账号
+
+**响应**: `200 OK`
+```json
+{
+  "message": "用户 john_doe 已删除",
+  "deleted_user_id": "uuid"
+}
+```
+
+#### 7.6 修改用户角色
+
+**PUT** `/api/v1/users/{user_id}/role`
+
+修改用户的角色。
+
+**认证**: 必需（需要admin权限）
+
+**限制**: 不能修改自己的角色
+
+**请求体**:
+```json
+{
+  "role": "admin"  // admin | user | viewer
+}
+```
+
+**响应**: `200 OK`
+
+#### 7.7 启用/禁用用户
+
+**PUT** `/api/v1/users/{user_id}/status`
+
+启用或禁用用户账号。
+
+**认证**: 必需（需要admin权限）
+
+**限制**: 不能修改自己的状态
+
+**请求体**:
+```json
+{
+  "is_active": false
+}
+```
+
+**响应**: `200 OK`
+
+---
+
+### 8. 审计日志 (Audit Logs) - 仅管理员
+
+审计日志记录系统中的重要操作，包括登录、命令执行、权限变更等。
+
+#### 8.1 获取审计日志列表
+
+**GET** `/api/v1/audit-logs`
+
+获取审计日志列表（支持筛选、搜索、分页）。
+
+**认证**: 必需（需要admin权限）
+
+**查询参数**:
+- `page` (integer): 页码，默认1
+- `size` (integer): 每页数量，默认20，最大100
+- `user_id` (uuid): 按用户筛选
+- `server_id` (uuid): 按服务器筛选
+- `action` (string): 按操作类型筛选
+- `resource_type` (string): 按资源类型筛选
+- `search` (string): 搜索关键词（用户名、操作、资源）
+
+**响应**: `200 OK`
+```json
+{
+  "total": 500,
+  "page": 1,
+  "size": 20,
+  "items": [
+    {
+      "id": 123,
+      "user_id": "uuid",
+      "username": "john_doe",
+      "server_id": "uuid",
+      "server_name": "Web Server 01",
+      "action": "execute_command",
+      "resource_type": "command",
+      "details": {
+        "command": "systemctl status nginx",
+        "exit_code": 0
+      },
+      "ip_address": "192.168.1.100",
+      "created_at": "2025-01-01T00:00:00Z"
+    }
+  ]
+}
+```
+
+#### 8.2 获取审计日志详情
+
+**GET** `/api/v1/audit-logs/{log_id}`
+
+获取单条审计日志的详细信息。
+
+**认证**: 必需（需要admin权限）
+
+**响应**: `200 OK`
+```json
+{
+  "id": 123,
+  "user_id": "uuid",
+  "username": "john_doe",
+  "server_id": "uuid",
+  "server_name": "Web Server 01",
+  "action": "execute_command",
+  "resource_type": "command",
+  "details": {
+    "command": "systemctl status nginx",
+    "exit_code": 0,
+    "stdout": "nginx is running",
+    "execution_time": 0.5
+  },
+  "ip_address": "192.168.1.100",
+  "created_at": "2025-01-01T00:00:00Z"
+}
+```
+
+**常见操作类型**:
+- `login` - 用户登录
+- `logout` - 用户登出
+- `register` - 用户注册
+- `execute_command` - 执行命令
+- `create_server` - 创建服务器
+- `update_server` - 更新服务器
+- `delete_server` - 删除服务器
+- `grant_permission` - 授予权限
+- `revoke_permission` - 撤销权限
+- `create_user` - 创建用户（管理员）
+- `update_user` - 更新用户（管理员）
+- `delete_user` - 删除用户（管理员）
+
+---
+
+### 9. WebSocket 端点
+
+#### 9.1 实时监控
+
+**WebSocket** `/api/v1/ws/monitoring/{server_id}`
+
+实时推送服务器性能指标数据。
+
+**认证**: 需要在查询参数中提供token: `?token=<access_token>`
+
+**消息格式**:
+```json
+{
+  "type": "metrics",
+  "data": {
+    "cpu_percent": 45.2,
+    "memory_percent": 62.8,
+    "memory_used_mb": 4096,
+    "memory_total_mb": 8192,
+    "disk_percent": 35.5,
+    "network_sent_mb": 1024.5,
+    "network_recv_mb": 2048.3,
+    "timestamp": "2025-01-01T00:00:00Z"
+  }
+}
+```
+
+**推送频率**: 每3秒一次
+
+#### 9.2 Web Terminal
+
+**WebSocket** `/api/v1/ws/terminal/{server_id}`
+
+Web终端连接，提供SSH交互式终端。
+
+**认证**: 需要在查询参数中提供token: `?token=<access_token>`
+
+**客户端消息** (发送命令):
+```json
+{
+  "type": "input",
+  "data": "ls -la\n"
+}
+```
+
+**服务器消息** (命令输出):
+```json
+{
+  "type": "output",
+  "data": "total 48\ndrwxr-xr-x  12 user user 4096 Jan  1 00:00 .\n..."
+}
+```
+
+**错误消息**:
+```json
+{
+  "type": "error",
+  "message": "Connection lost"
+}
+```
+
+---
+
 ## 错误代码
 
 | 状态码 | 说明 |
@@ -753,13 +1101,93 @@ Authorization: Bearer <access_token>
 - 认证接口: 10次/分钟
 - 其他接口: 60次/分钟
 
-## WebSocket (计划中)
+## 使用示例
 
-- `/ws/metrics/{server_id}`: 实时监控数据推送
-- `/ws/terminal/{server_id}`: Web终端连接
+### cURL 示例
+
+```bash
+# 1. 用户登录
+curl -X POST http://localhost:8000/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username": "admin", "password": "admin123"}'
+
+# 2. 获取服务器列表
+curl -X GET http://localhost:8000/api/v1/servers \
+  -H "Authorization: Bearer <access_token>"
+
+# 3. 执行命令
+curl -X POST http://localhost:8000/api/v1/execute/command \
+  -H "Authorization: Bearer <access_token>" \
+  -H "Content-Type: application/json" \
+  -d '{"server_id": "uuid", "command": "uptime"}'
+```
+
+### Python 示例
+
+```python
+import requests
+
+# 登录
+response = requests.post(
+    "http://localhost:8000/api/v1/auth/login",
+    json={"username": "admin", "password": "admin123"}
+)
+token = response.json()["access_token"]
+
+# 获取服务器列表
+headers = {"Authorization": f"Bearer {token}"}
+servers = requests.get(
+    "http://localhost:8000/api/v1/servers",
+    headers=headers
+).json()
+
+# 执行命令
+result = requests.post(
+    "http://localhost:8000/api/v1/execute/command",
+    headers=headers,
+    json={"server_id": "uuid", "command": "df -h"}
+).json()
+```
+
+### JavaScript 示例
+
+```javascript
+// 登录
+const loginResponse = await fetch('http://localhost:8000/api/v1/auth/login', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ username: 'admin', password: 'admin123' })
+});
+const { access_token } = await loginResponse.json();
+
+// 获取服务器列表
+const serversResponse = await fetch('http://localhost:8000/api/v1/servers', {
+  headers: { 'Authorization': `Bearer ${access_token}` }
+});
+const servers = await serversResponse.json();
+
+// WebSocket 连接示例
+const ws = new WebSocket(`ws://localhost:8000/api/v1/ws/monitoring/${serverId}?token=${access_token}`);
+ws.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  console.log('Metrics:', data);
+};
+```
 
 ## 交互式文档
 
 启动应用后访问：
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
+
+## 版本历史
+
+- **v1.0** (2025-01-07): 初始版本，包含所有核心功能
+  - 认证与用户管理
+  - 服务器管理
+  - 实时监控与历史指标
+  - 命令执行
+  - AI助手
+  - 权限管理
+  - 审计日志
+  - WebSocket支持（实时监控、Web终端）
