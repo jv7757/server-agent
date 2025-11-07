@@ -66,11 +66,19 @@ class PermissionCheck(BaseModel):
 class PermissionResponse(BaseModel):
     """权限响应模式"""
 
-    permission_id: int
+    permission_id: str
     server_id: str | UUID
     user_id: str | UUID
     permissions: List[str] = Field(..., description="权限列表")
     created_at: datetime
+
+    @field_validator('permission_id', 'server_id', 'user_id', mode='before')
+    @classmethod
+    def convert_uuid_to_str(cls, v):
+        """将 UUID 转换为字符串"""
+        if isinstance(v, UUID):
+            return str(v)
+        return v
 
     class Config:
         from_attributes = True
@@ -79,12 +87,20 @@ class PermissionResponse(BaseModel):
 class UserPermissionItem(BaseModel):
     """用户权限列表项"""
 
-    permission_id: int
+    permission_id: str
     server_id: str
     server_name: str
     server_host: str
     permissions: List[str]
     created_at: datetime
+
+    @field_validator('permission_id', 'server_id', mode='before')
+    @classmethod
+    def convert_uuid_to_str(cls, v):
+        """将 UUID 转换为字符串"""
+        if isinstance(v, UUID):
+            return str(v)
+        return v
 
 
 class UserPermissionListResponse(BaseModel):
@@ -99,12 +115,20 @@ class UserPermissionListResponse(BaseModel):
 class ServerPermissionItem(BaseModel):
     """服务器权限列表项"""
 
-    permission_id: int
+    permission_id: str
     user_id: str
     username: str
     email: str
     permissions: List[str]
     created_at: datetime
+
+    @field_validator('permission_id', 'user_id', mode='before')
+    @classmethod
+    def convert_uuid_to_str(cls, v):
+        """将 UUID 转换为字符串"""
+        if isinstance(v, UUID):
+            return str(v)
+        return v
 
 
 class ServerPermissionListResponse(BaseModel):

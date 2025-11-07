@@ -218,7 +218,7 @@ export interface PermissionRevoke {
 }
 
 export interface Permission {
-  permission_id: number
+  permission_id: string
   server_id: string
   user_id: string
   permissions: string[]
@@ -226,7 +226,7 @@ export interface Permission {
 }
 
 export interface UserPermissionItem {
-  permission_id: number
+  permission_id: string
   server_id: string
   server_name: string
   server_host: string
@@ -235,7 +235,7 @@ export interface UserPermissionItem {
 }
 
 export interface ServerPermissionItem {
-  permission_id: number
+  permission_id: string
   user_id: string
   username: string
   email: string
