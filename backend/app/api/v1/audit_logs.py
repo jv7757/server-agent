@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.dependencies import CurrentUser
-from app.models.audit_log import AuditLog
+from app.models.audit import AuditLog
 from app.models.server import Server
 from app.models.user import User
 from app.schemas.audit import AuditLogListResponse, AuditLogResponse
