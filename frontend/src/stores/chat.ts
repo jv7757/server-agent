@@ -140,7 +140,7 @@ export const useChatStore = defineStore('chat', () => {
   /**
    * 开始新会话
    */
-  const startNewConversation = (serverId?: string) => {
+  const startNewConversation = (_serverId?: string) => {
     currentConversationId.value = null
     messages.value = []
   }

@@ -41,13 +41,14 @@ request.interceptors.response.use(
       const { status, data } = error.response
 
       switch (status) {
-        case 401:
+        case 401: {
           // 未授权，清除 token 并跳转到登录页
           const authStore = useAuthStore()
           authStore.logout()
           router.push('/login')
           ElMessage.error(data.detail || '未授权，请重新登录')
           break
+        }
 
         case 403:
           ElMessage.error(data.detail || '权限不足')

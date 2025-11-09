@@ -51,7 +51,7 @@ export const useAuthStore = defineStore(
     const register = async (data: RegisterRequest) => {
       isLoading.value = true
       try {
-        const newUser = await authApi.register(data)
+        await authApi.register(data)
         ElMessage.success('注册成功，请登录')
         return true
       } catch (error) {

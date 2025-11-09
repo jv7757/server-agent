@@ -101,19 +101,7 @@ import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useI18n } from 'vue-i18n'
-import {
-  Monitor,
-  Fold,
-  Expand,
-  User,
-  SwitchButton,
-  Server,
-  Console,
-  Operation,
-  ChatDotRound,
-  Key,
-  Document,
-} from '@element-plus/icons-vue'
+import { Monitor, Fold, Expand, User, SwitchButton } from '@element-plus/icons-vue'
 import { Guide as Globe } from '@element-plus/icons-vue'
 
 const router = useRouter()
