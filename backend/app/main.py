@@ -1,6 +1,7 @@
 """
 FastAPI应用主入口
 """
+
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -74,7 +75,17 @@ async def global_exception_handler(request, exc):
 
 
 # 导入并注册路由
-from app.api.v1 import audit_logs, auth, chat, execute, metrics, permissions, servers, users, websocket
+from app.api.v1 import (
+    audit_logs,
+    auth,
+    chat,
+    execute,
+    metrics,
+    permissions,
+    servers,
+    users,
+    websocket,
+)
 
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
 app.include_router(users.router, prefix="/api/v1", tags=["User Management"])

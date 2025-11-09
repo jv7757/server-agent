@@ -1,6 +1,7 @@
 """
 FastAPI依赖注入
 """
+
 from typing import Annotated
 from uuid import UUID
 
@@ -17,9 +18,7 @@ from app.services.permission_service import PermissionService
 security = HTTPBearer()
 
 
-async def get_auth_service(
-    db: Annotated[AsyncSession, Depends(get_db)]
-) -> AuthService:
+async def get_auth_service(db: Annotated[AsyncSession, Depends(get_db)]) -> AuthService:
     """获取认证服务依赖"""
     return AuthService(db)
 
@@ -91,9 +90,7 @@ async def get_current_user_ws(
         raise
 
 
-async def get_current_active_user(
-    current_user: Annotated[User, Depends(get_current_user)]
-) -> User:
+async def get_current_active_user(current_user: Annotated[User, Depends(get_current_user)]) -> User:
     """
     获取当前激活用户
 
@@ -107,15 +104,12 @@ async def get_current_active_user(
         HTTPException: 403 账户未激活
     """
     if not current_user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Inactive user"
-        )
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Inactive user")
     return current_user
 
 
 async def get_current_admin_user(
-    current_user: Annotated[User, Depends(get_current_active_user)]
+    current_user: Annotated[User, Depends(get_current_active_user)],
 ) -> User:
     """
     获取当前管理员用户
@@ -130,10 +124,7 @@ async def get_current_admin_user(
         HTTPException: 403 权限不足
     """
     if not current_user.is_admin:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not enough permissions"
-        )
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not enough permissions")
     return current_user
 
 
@@ -145,9 +136,7 @@ CurrentAdmin = Annotated[User, Depends(get_current_admin_user)]
 # ========== 权限检查 ==========
 
 
-async def get_permission_service(
-    db: Annotated[AsyncSession, Depends(get_db)]
-) -> PermissionService:
+async def get_permission_service(db: Annotated[AsyncSession, Depends(get_db)]) -> PermissionService:
     """获取权限服务依赖"""
     return PermissionService(db)
 

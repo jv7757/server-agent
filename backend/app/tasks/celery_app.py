@@ -1,6 +1,7 @@
 """
 Celery应用配置
 """
+
 from celery import Celery
 from celery.schedules import crontab
 

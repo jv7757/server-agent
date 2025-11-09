@@ -1,6 +1,7 @@
 """
 认证API测试
 """
+
 import pytest
 from httpx import AsyncClient
 
@@ -29,9 +30,7 @@ class TestAuthAPI:
         assert "id" in data
         assert "password" not in data
 
-    async def test_register_duplicate_username(
-        self, client: AsyncClient, test_user: User
-    ):
+    async def test_register_duplicate_username(self, client: AsyncClient, test_user: User):
         """测试注册重复用户名"""
         response = await client.post(
             "/api/v1/auth/register",
@@ -44,9 +43,7 @@ class TestAuthAPI:
         assert response.status_code == 400
         assert "already registered" in response.json()["detail"].lower()
 
-    async def test_register_duplicate_email(
-        self, client: AsyncClient, test_user: User
-    ):
+    async def test_register_duplicate_email(self, client: AsyncClient, test_user: User):
         """测试注册重复邮箱"""
         response = await client.post(
             "/api/v1/auth/register",
@@ -132,9 +129,7 @@ class TestAuthAPI:
         refresh_token = login_response.json()["refresh_token"]
 
         # 使用refresh_token获取新的access_token
-        response = await client.post(
-            "/api/v1/auth/refresh", json={"refresh_token": refresh_token}
-        )
+        response = await client.post("/api/v1/auth/refresh", json={"refresh_token": refresh_token})
         assert response.status_code == 200
         data = response.json()
         assert "access_token" in data
@@ -142,9 +137,7 @@ class TestAuthAPI:
 
     async def test_refresh_token_invalid(self, client: AsyncClient):
         """测试无效refresh_token"""
-        response = await client.post(
-            "/api/v1/auth/refresh", json={"refresh_token": "invalidtoken"}
-        )
+        response = await client.post("/api/v1/auth/refresh", json={"refresh_token": "invalidtoken"})
         assert response.status_code == 401
 
     async def test_update_profile(self, client: AsyncClient, auth_headers: dict):

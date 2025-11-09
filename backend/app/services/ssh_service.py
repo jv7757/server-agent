@@ -1,6 +1,7 @@
 """
 SSH连接服务
 """
+
 import asyncio
 from typing import Any
 
@@ -75,6 +76,7 @@ class SSHService:
         if self.private_key:
             try:
                 import io
+
                 key_file = io.StringIO(self.private_key)
                 pkey = paramiko.RSAKey.from_private_key(key_file)
                 connect_kwargs["pkey"] = pkey
@@ -94,9 +96,7 @@ class SSHService:
             await loop.run_in_executor(None, self.client.close)
             self.client = None
 
-    async def execute_command(
-        self, command: str, timeout: int | None = None
-    ) -> dict[str, Any]:
+    async def execute_command(self, command: str, timeout: int | None = None) -> dict[str, Any]:
         """
         执行SSH命令
 
@@ -121,6 +121,7 @@ class SSHService:
 
         try:
             import time
+
             start_time = time.time()
 
             # 在线程池中执行命令
@@ -161,6 +162,7 @@ class SSHService:
                 - latency_ms: 延迟（毫秒）
         """
         import time
+
         start_time = time.time()
 
         try:

@@ -1,6 +1,7 @@
 """
 服务器监控数据模型
 """
+
 import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
@@ -25,10 +26,7 @@ class ServerMetric(Base):
 
     # 服务器外键
     server_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
-        ForeignKey("servers.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True
+        UUID(as_uuid=True), ForeignKey("servers.id", ondelete="CASCADE"), nullable=False, index=True
     )
 
     # CPU信息
@@ -51,7 +49,9 @@ class ServerMetric(Base):
 
     # 系统信息
     uptime_seconds: Mapped[int | None] = mapped_column(BigInteger)
-    load_average: Mapped[dict | None] = mapped_column(JSONB)  # {"1min": 0.5, "5min": 0.3, "15min": 0.2}
+    load_average: Mapped[dict | None] = mapped_column(
+        JSONB
+    )  # {"1min": 0.5, "5min": 0.3, "15min": 0.2}
 
     # 采集时间
     collected_at: Mapped[datetime] = mapped_column(

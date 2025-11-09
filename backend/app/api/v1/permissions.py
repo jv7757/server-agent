@@ -1,6 +1,7 @@
 """
 权限管理API路由
 """
+
 from typing import Annotated
 from uuid import UUID
 

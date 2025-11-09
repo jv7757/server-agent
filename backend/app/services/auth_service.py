@@ -1,6 +1,7 @@
 """
 认证服务
 """
+
 from uuid import UUID
 
 from sqlalchemy import or_, select
@@ -195,9 +196,7 @@ class AuthService:
         except Exception as e:
             raise ValueError(f"Could not validate credentials: {str(e)}")
 
-    async def change_password(
-        self, user_id: UUID, old_password: str, new_password: str
-    ) -> bool:
+    async def change_password(self, user_id: UUID, old_password: str, new_password: str) -> bool:
         """
         修改密码
 

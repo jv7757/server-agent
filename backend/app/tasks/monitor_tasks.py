@@ -1,6 +1,7 @@
 """
 监控相关的Celery任务
 """
+
 import asyncio
 
 from sqlalchemy import select
@@ -36,9 +37,7 @@ async def _collect_all_servers_metrics_async():
     async with CeleryAsyncSession() as db:
         try:
             # 查询所有激活的服务器
-            result = await db.execute(
-                select(Server).where(Server.status != "offline")
-            )
+            result = await db.execute(select(Server).where(Server.status != "offline"))
             servers = result.scalars().all()
 
             logger.info(f"Found {len(servers)} servers to collect metrics")

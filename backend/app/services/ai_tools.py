@@ -1,6 +1,7 @@
 """
 AI工具函数定义（用于Function Calling）
 """
+
 import json
 from typing import Any, Callable, Dict, List
 from uuid import UUID

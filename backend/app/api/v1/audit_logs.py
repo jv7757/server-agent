@@ -1,6 +1,7 @@
 """
 审计日志API路由
 """
+
 from typing import Annotated
 from uuid import UUID
 
@@ -44,10 +45,7 @@ async def get_audit_logs(
     """
     # 检查管理员权限
     if current_user.role != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="需要管理员权限"
-        )
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="需要管理员权限")
 
     # 构建查询条件
     conditions = []
@@ -66,11 +64,7 @@ async def get_audit_logs(
 
     # 构建基础查询，关联用户和服务器表以获取名称
     query = (
-        select(
-            AuditLog,
-            User.username,
-            Server.name.label("server_name")
-        )
+        select(AuditLog, User.username, Server.name.label("server_name"))
         .outerjoin(User, AuditLog.user_id == User.id)
         .outerjoin(Server, AuditLog.server_id == Server.id)
     )
@@ -86,7 +80,7 @@ async def get_audit_logs(
             or_(
                 User.username.ilike(search_pattern),
                 Server.name.ilike(search_pattern),
-                AuditLog.action.ilike(search_pattern)
+                AuditLog.action.ilike(search_pattern),
             )
         )
 
@@ -97,14 +91,13 @@ async def get_audit_logs(
 
     if search:
         count_query = (
-            count_query
-            .outerjoin(User, AuditLog.user_id == User.id)
+            count_query.outerjoin(User, AuditLog.user_id == User.id)
             .outerjoin(Server, AuditLog.server_id == Server.id)
             .where(
                 or_(
                     User.username.ilike(search_pattern),
                     Server.name.ilike(search_pattern),
-                    AuditLog.action.ilike(search_pattern)
+                    AuditLog.action.ilike(search_pattern),
                 )
             )
         )
@@ -113,12 +106,7 @@ async def get_audit_logs(
     total = len(total_result.all())
 
     # 分页和排序
-    query = (
-        query
-        .order_by(desc(AuditLog.created_at))
-        .offset((page - 1) * size)
-        .limit(size)
-    )
+    query = query.order_by(desc(AuditLog.created_at)).offset((page - 1) * size).limit(size)
 
     result = await db.execute(query)
     rows = result.all()
@@ -136,16 +124,11 @@ async def get_audit_logs(
             resource_type=audit_log.resource_type,
             details=audit_log.details,
             ip_address=str(audit_log.ip_address) if audit_log.ip_address else None,
-            created_at=audit_log.created_at
+            created_at=audit_log.created_at,
         )
         items.append(item)
 
-    return AuditLogListResponse(
-        total=total,
-        page=page,
-        size=size,
-        items=items
-    )
+    return AuditLogListResponse(total=total, page=page, size=size, items=items)
 
 
 @router.get("/audit-logs/{log_id}", response_model=AuditLogResponse)
@@ -161,18 +144,11 @@ async def get_audit_log(
     """
     # 检查管理员权限
     if current_user.role != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="需要管理员权限"
-        )
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="需要管理员权限")
 
     # 查询日志，关联用户和服务器
     query = (
-        select(
-            AuditLog,
-            User.username,
-            Server.name.label("server_name")
-        )
+        select(AuditLog, User.username, Server.name.label("server_name"))
         .outerjoin(User, AuditLog.user_id == User.id)
         .outerjoin(Server, AuditLog.server_id == Server.id)
         .where(AuditLog.id == log_id)
@@ -182,10 +158,7 @@ async def get_audit_log(
     row = result.first()
 
     if not row:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="审计日志不存在"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="审计日志不存在")
 
     audit_log, username, server_name = row
 
@@ -199,5 +172,5 @@ async def get_audit_log(
         resource_type=audit_log.resource_type,
         details=audit_log.details,
         ip_address=str(audit_log.ip_address) if audit_log.ip_address else None,
-        created_at=audit_log.created_at
+        created_at=audit_log.created_at,
     )

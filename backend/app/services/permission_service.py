@@ -1,6 +1,7 @@
 """
 权限管理服务
 """
+
 from typing import List
 from uuid import UUID
 
@@ -46,16 +47,12 @@ class PermissionService:
             raise ValueError("您没有权限管理该服务器的权限")
 
         # 验证目标用户存在
-        user_result = await self.db.execute(
-            select(User).where(User.id == target_user_id)
-        )
+        user_result = await self.db.execute(select(User).where(User.id == target_user_id))
         if not user_result.scalar_one_or_none():
             raise ValueError("目标用户不存在")
 
         # 验证服务器存在
-        server_result = await self.db.execute(
-            select(Server).where(Server.id == server_id)
-        )
+        server_result = await self.db.execute(select(Server).where(Server.id == server_id))
         if not server_result.scalar_one_or_none():
             raise ValueError("服务器不存在")
 
@@ -185,14 +182,16 @@ class PermissionService:
         items = []
 
         for permission, server in result.all():
-            items.append({
-                "permission_id": permission.id,
-                "server_id": str(server.id),
-                "server_name": server.name,
-                "server_host": server.host,
-                "permissions": self._format_permissions(permission),
-                "created_at": permission.created_at,
-            })
+            items.append(
+                {
+                    "permission_id": permission.id,
+                    "server_id": str(server.id),
+                    "server_name": server.name,
+                    "server_host": server.host,
+                    "permissions": self._format_permissions(permission),
+                    "created_at": permission.created_at,
+                }
+            )
 
         return {
             "total": total,
@@ -251,14 +250,16 @@ class PermissionService:
         items = []
 
         for permission, user in result.all():
-            items.append({
-                "permission_id": permission.id,
-                "user_id": str(user.id),
-                "username": user.username,
-                "email": user.email,
-                "permissions": self._format_permissions(permission),
-                "created_at": permission.created_at,
-            })
+            items.append(
+                {
+                    "permission_id": permission.id,
+                    "user_id": str(user.id),
+                    "username": user.username,
+                    "email": user.email,
+                    "permissions": self._format_permissions(permission),
+                    "created_at": permission.created_at,
+                }
+            )
 
         return {
             "total": total,
@@ -285,9 +286,7 @@ class PermissionService:
             bool: 是否有权限
         """
         # 检查用户是否是管理员
-        user_result = await self.db.execute(
-            select(User).where(User.id == user_id)
-        )
+        user_result = await self.db.execute(select(User).where(User.id == user_id))
         user = user_result.scalar_one_or_none()
 
         if not user:
@@ -298,9 +297,7 @@ class PermissionService:
             return True
 
         # 检查用户是否是服务器所有者
-        server_result = await self.db.execute(
-            select(Server).where(Server.id == server_id)
-        )
+        server_result = await self.db.execute(select(Server).where(Server.id == server_id))
         server = server_result.scalar_one_or_none()
 
         if not server:
@@ -352,9 +349,7 @@ class PermissionService:
             bool: 是否可以管理权限
         """
         # 检查是否是系统管理员
-        user_result = await self.db.execute(
-            select(User).where(User.id == user_id)
-        )
+        user_result = await self.db.execute(select(User).where(User.id == user_id))
         user = user_result.scalar_one_or_none()
 
         if not user:
@@ -364,9 +359,7 @@ class PermissionService:
             return True
 
         # 检查是否是服务器所有者
-        server_result = await self.db.execute(
-            select(Server).where(Server.id == server_id)
-        )
+        server_result = await self.db.execute(select(Server).where(Server.id == server_id))
         server = server_result.scalar_one_or_none()
 
         if not server:
@@ -394,9 +387,7 @@ class PermissionService:
             List[UUID]: 服务器ID列表
         """
         # 检查用户角色
-        user_result = await self.db.execute(
-            select(User).where(User.id == user_id)
-        )
+        user_result = await self.db.execute(select(User).where(User.id == user_id))
         user = user_result.scalar_one_or_none()
 
         if not user:
@@ -408,9 +399,7 @@ class PermissionService:
             return [row[0] for row in result.all()]
 
         # 获取用户拥有的服务器
-        owned_servers = await self.db.execute(
-            select(Server.id).where(Server.owner_id == user_id)
-        )
+        owned_servers = await self.db.execute(select(Server.id).where(Server.owner_id == user_id))
         server_ids = [row[0] for row in owned_servers.all()]
 
         # 根据权限级别构建查询条件
@@ -440,8 +429,7 @@ class PermissionService:
         # 获取有权限的服务器
         if permission_conditions:
             permitted_servers = await self.db.execute(
-                select(UserServerPermission.server_id)
-                .where(
+                select(UserServerPermission.server_id).where(
                     and_(
                         UserServerPermission.user_id == user_id,
                         or_(*permission_conditions),

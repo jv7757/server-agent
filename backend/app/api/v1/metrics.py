@@ -1,6 +1,7 @@
 """
 服务器监控指标API路由
 """
+
 from datetime import datetime
 from typing import Annotated
 from uuid import UUID
@@ -32,7 +33,11 @@ async def get_server_service(db: Annotated[AsyncSession, Depends(get_db)]) -> Se
     return ServerService(db)
 
 
-@router.post("/servers/{server_id}/collect", response_model=MetricResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/servers/{server_id}/collect",
+    response_model=MetricResponse,
+    status_code=status.HTTP_201_CREATED,
+)
 async def collect_server_metrics(
     server_id: UUID,
     current_user: CurrentUser,

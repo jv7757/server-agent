@@ -1,6 +1,7 @@
 """
 用户模型
 """
+
 import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
@@ -24,9 +25,7 @@ class User(Base):
     __tablename__ = "users"
 
     # 主键
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
     # 基本信息
     username: Mapped[str] = mapped_column(String(50), unique=True, index=True, nullable=False)
@@ -54,14 +53,12 @@ class User(Base):
         "UserServerPermission",
         back_populates="user",
         cascade="all, delete-orphan",
-        foreign_keys="[UserServerPermission.user_id]"
+        foreign_keys="[UserServerPermission.user_id]",
     )
     chat_history: Mapped[list["ChatHistory"]] = relationship(
         "ChatHistory", back_populates="user", cascade="all, delete-orphan"
     )
-    audit_logs: Mapped[list["AuditLog"]] = relationship(
-        "AuditLog", back_populates="user"
-    )
+    audit_logs: Mapped[list["AuditLog"]] = relationship("AuditLog", back_populates="user")
 
     def __repr__(self) -> str:
         return f"<User {self.username}>"

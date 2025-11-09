@@ -1,6 +1,7 @@
 """
 认证相关的Pydantic模式
 """
+
 from pydantic import BaseModel, Field
 
 from app.schemas.user import UserResponse

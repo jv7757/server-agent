@@ -1,6 +1,7 @@
 """
 认证API路由
 """
+
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status

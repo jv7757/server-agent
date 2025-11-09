@@ -1,6 +1,7 @@
 """
 聊天相关的Pydantic模式
 """
+
 from datetime import datetime
 from uuid import UUID
 
@@ -46,7 +47,7 @@ class ChatMessageResponse(BaseModel):
     content: str
     created_at: datetime
 
-    @field_validator('id', mode='before')
+    @field_validator("id", mode="before")
     @classmethod
     def convert_uuid_to_str(cls, v):
         """将 UUID 转换为字符串"""

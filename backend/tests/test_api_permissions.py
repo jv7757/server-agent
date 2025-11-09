@@ -1,6 +1,7 @@
 """
 权限管理API测试
 """
+
 import pytest
 from httpx import AsyncClient
 
@@ -231,9 +232,7 @@ class TestPermissionAPI:
         )
 
         # 获取viewer的权限列表
-        response = await client.get(
-            "/api/v1/permissions/user/permissions", headers=viewer_headers
-        )
+        response = await client.get("/api/v1/permissions/user/permissions", headers=viewer_headers)
         assert response.status_code == 200
         data = response.json()
         assert data["total"] >= 1

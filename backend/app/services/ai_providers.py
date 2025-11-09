@@ -1,6 +1,7 @@
 """
 AI提供商抽象接口和适配器实现
 """
+
 from abc import ABC, abstractmethod
 from typing import Any, AsyncIterator, Dict, List
 
@@ -361,9 +362,7 @@ class AIServiceFactory:
     """AI服务工厂类"""
 
     @staticmethod
-    def create(
-        provider: str | None = None, model: str | None = None, **kwargs
-    ) -> AIProvider:
+    def create(provider: str | None = None, model: str | None = None, **kwargs) -> AIProvider:
         """
         创建AI提供商实例
 

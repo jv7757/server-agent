@@ -1,6 +1,7 @@
 """
 AI聊天历史模型
 """
+
 import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
@@ -22,27 +23,18 @@ class ChatHistory(Base):
     __tablename__ = "chat_history"
 
     # 主键
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
     # 外键
     user_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
-        ForeignKey("users.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
     )
     server_id: Mapped[uuid.UUID | None] = mapped_column(
-        UUID(as_uuid=True),
-        ForeignKey("servers.id", ondelete="SET NULL"),
-        index=True
+        UUID(as_uuid=True), ForeignKey("servers.id", ondelete="SET NULL"), index=True
     )
 
     # 消息信息
-    role: Mapped[str] = mapped_column(
-        String(20), nullable=False
-    )  # user, assistant, system
+    role: Mapped[str] = mapped_column(String(20), nullable=False)  # user, assistant, system
     content: Mapped[str] = mapped_column(Text, nullable=False)
 
     # 会话ID（用于分组对话）

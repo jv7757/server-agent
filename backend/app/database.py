@@ -1,6 +1,7 @@
 """
 数据库连接和会话管理
 """
+
 from typing import AsyncGenerator
 
 from sqlalchemy import create_engine
@@ -30,9 +31,7 @@ AsyncSessionLocal = sessionmaker(
 )
 
 # 创建同步引擎（用于Alembic迁移）
-sync_database_url = settings.database_url.replace("+asyncpg", "").replace(
-    "+aiomysql", "+pymysql"
-)
+sync_database_url = settings.database_url.replace("+asyncpg", "").replace("+aiomysql", "+pymysql")
 sync_engine = create_engine(sync_database_url, echo=settings.debug)
 
 # 创建基础模型类

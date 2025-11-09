@@ -1,6 +1,7 @@
 """
 操作审计日志模型
 """
+
 import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
@@ -26,14 +27,10 @@ class AuditLog(Base):
 
     # 外键
     user_id: Mapped[uuid.UUID | None] = mapped_column(
-        UUID(as_uuid=True),
-        ForeignKey("users.id", ondelete="SET NULL"),
-        index=True
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), index=True
     )
     server_id: Mapped[uuid.UUID | None] = mapped_column(
-        UUID(as_uuid=True),
-        ForeignKey("servers.id", ondelete="SET NULL"),
-        index=True
+        UUID(as_uuid=True), ForeignKey("servers.id", ondelete="SET NULL"), index=True
     )
 
     # 操作信息

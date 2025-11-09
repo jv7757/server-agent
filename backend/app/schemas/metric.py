@@ -1,6 +1,7 @@
 """
 监控指标相关的Pydantic模式
 """
+
 from datetime import datetime
 from uuid import UUID
 

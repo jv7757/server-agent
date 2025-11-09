@@ -1,6 +1,7 @@
 """
 应用配置管理
 """
+
 from functools import lru_cache
 from typing import List, Literal
 

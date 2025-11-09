@@ -1,6 +1,7 @@
 """
 服务器模型
 """
+
 import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
@@ -25,9 +26,7 @@ class Server(Base):
     __tablename__ = "servers"
 
     # 主键
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
     # 基本信息
     name: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
@@ -68,12 +67,8 @@ class Server(Base):
     permissions: Mapped[list["UserServerPermission"]] = relationship(
         "UserServerPermission", back_populates="server", cascade="all, delete-orphan"
     )
-    chat_history: Mapped[list["ChatHistory"]] = relationship(
-        "ChatHistory", back_populates="server"
-    )
-    audit_logs: Mapped[list["AuditLog"]] = relationship(
-        "AuditLog", back_populates="server"
-    )
+    chat_history: Mapped[list["ChatHistory"]] = relationship("ChatHistory", back_populates="server")
+    audit_logs: Mapped[list["AuditLog"]] = relationship("AuditLog", back_populates="server")
 
     def __repr__(self) -> str:
         return f"<Server {self.name} ({self.host})>"

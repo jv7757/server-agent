@@ -1,6 +1,7 @@
 """
 服务器监控服务
 """
+
 from datetime import datetime, timedelta
 from typing import Any
 from uuid import UUID
@@ -275,9 +276,7 @@ class MetricsService:
 
         return list(result.scalars().all())
 
-    async def get_metrics_summary(
-        self, server_id: UUID, hours: int = 24
-    ) -> dict[str, Any]:
+    async def get_metrics_summary(self, server_id: UUID, hours: int = 24) -> dict[str, Any]:
         """
         获取服务器指标摘要统计
 

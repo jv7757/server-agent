@@ -1,6 +1,7 @@
 """
 服务器管理API测试
 """
+
 import pytest
 from httpx import AsyncClient
 
@@ -36,9 +37,7 @@ class TestServerAPI:
         assert "ssh_password" not in data  # 密码不应返回
         assert data["tags"] == ["production", "web"]
 
-    async def test_create_server_with_ssh_key(
-        self, client: AsyncClient, auth_headers: dict
-    ):
+    async def test_create_server_with_ssh_key(self, client: AsyncClient, auth_headers: dict):
         """测试使用SSH密钥创建服务器"""
         response = await client.post(
             "/api/v1/servers",
@@ -70,9 +69,7 @@ class TestServerAPI:
         )
         assert response.status_code == 403
 
-    async def test_create_server_missing_credentials(
-        self, client: AsyncClient, auth_headers: dict
-    ):
+    async def test_create_server_missing_credentials(self, client: AsyncClient, auth_headers: dict):
         """测试创建服务器缺少凭证"""
         response = await client.post(
             "/api/v1/servers",
@@ -103,9 +100,7 @@ class TestServerAPI:
         self, client: AsyncClient, auth_headers: dict, multiple_servers: list[Server]
     ):
         """测试服务器列表分页"""
-        response = await client.get(
-            "/api/v1/servers?page=1&size=2", headers=auth_headers
-        )
+        response = await client.get("/api/v1/servers?page=1&size=2", headers=auth_headers)
         assert response.status_code == 200
         data = response.json()
         assert data["total"] == 5
@@ -117,9 +112,7 @@ class TestServerAPI:
         self, client: AsyncClient, auth_headers: dict, multiple_servers: list[Server]
     ):
         """测试按状态筛选服务器"""
-        response = await client.get(
-            "/api/v1/servers?status=online", headers=auth_headers
-        )
+        response = await client.get("/api/v1/servers?status=online", headers=auth_headers)
         assert response.status_code == 200
         data = response.json()
         assert data["total"] == 3  # 有3个online服务器
@@ -130,9 +123,7 @@ class TestServerAPI:
         self, client: AsyncClient, auth_headers: dict, multiple_servers: list[Server]
     ):
         """测试按标签筛选服务器"""
-        response = await client.get(
-            "/api/v1/servers?tags=production", headers=auth_headers
-        )
+        response = await client.get("/api/v1/servers?tags=production", headers=auth_headers)
         assert response.status_code == 200
         data = response.json()
         assert data["total"] == 2  # 有2个production服务器
@@ -143,9 +134,7 @@ class TestServerAPI:
         self, client: AsyncClient, auth_headers: dict, multiple_servers: list[Server]
     ):
         """测试搜索服务器"""
-        response = await client.get(
-            "/api/v1/servers?search=server-1", headers=auth_headers
-        )
+        response = await client.get("/api/v1/servers?search=server-1", headers=auth_headers)
         assert response.status_code == 200
         data = response.json()
         assert data["total"] == 1
@@ -155,9 +144,7 @@ class TestServerAPI:
         self, client: AsyncClient, auth_headers: dict, test_server: Server
     ):
         """测试获取服务器详情"""
-        response = await client.get(
-            f"/api/v1/servers/{test_server.id}", headers=auth_headers
-        )
+        response = await client.get(f"/api/v1/servers/{test_server.id}", headers=auth_headers)
         assert response.status_code == 200
         data = response.json()
         assert data["id"] == str(test_server.id)
@@ -168,9 +155,7 @@ class TestServerAPI:
         """测试获取不存在的服务器"""
         from uuid import uuid4
 
-        response = await client.get(
-            f"/api/v1/servers/{uuid4()}", headers=auth_headers
-        )
+        response = await client.get(f"/api/v1/servers/{uuid4()}", headers=auth_headers)
         assert response.status_code == 404
 
     async def test_update_server(
@@ -207,31 +192,23 @@ class TestServerAPI:
         self, client: AsyncClient, auth_headers: dict, test_server: Server
     ):
         """测试删除服务器"""
-        response = await client.delete(
-            f"/api/v1/servers/{test_server.id}", headers=auth_headers
-        )
+        response = await client.delete(f"/api/v1/servers/{test_server.id}", headers=auth_headers)
         assert response.status_code == 204
 
         # 验证服务器已删除
-        get_response = await client.get(
-            f"/api/v1/servers/{test_server.id}", headers=auth_headers
-        )
+        get_response = await client.get(f"/api/v1/servers/{test_server.id}", headers=auth_headers)
         assert get_response.status_code == 404
 
     async def test_delete_server_not_owner(
         self, client: AsyncClient, viewer_headers: dict, test_server: Server
     ):
         """测试非所有者删除服务器"""
-        response = await client.delete(
-            f"/api/v1/servers/{test_server.id}", headers=viewer_headers
-        )
+        response = await client.delete(f"/api/v1/servers/{test_server.id}", headers=viewer_headers)
         assert response.status_code == 404
 
     async def test_admin_can_access_all_servers(
         self, client: AsyncClient, admin_headers: dict, test_server: Server
     ):
         """测试管理员可以访问所有服务器"""
-        response = await client.get(
-            f"/api/v1/servers/{test_server.id}", headers=admin_headers
-        )
+        response = await client.get(f"/api/v1/servers/{test_server.id}", headers=admin_headers)
         assert response.status_code == 200

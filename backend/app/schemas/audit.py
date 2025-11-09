@@ -1,6 +1,7 @@
 """
 审计日志相关的Pydantic模式
 """
+
 from datetime import datetime
 from uuid import UUID
 
@@ -21,7 +22,7 @@ class AuditLogResponse(BaseModel):
     ip_address: str | None
     created_at: datetime
 
-    @field_validator('user_id', 'server_id', mode='before')
+    @field_validator("user_id", "server_id", mode="before")
     @classmethod
     def convert_uuid_to_str(cls, v):
         """将 UUID 转换为字符串"""

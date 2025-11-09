@@ -1,6 +1,7 @@
 """
 安全相关工具：JWT、密码哈希、加密
 """
+
 from datetime import datetime, timedelta
 from typing import Any
 
@@ -22,16 +23,18 @@ pwd_context = CryptContext(
 try:
     fernet = Fernet(settings.encryption_key.encode())
 except Exception as e:
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("ERROR: Invalid ENCRYPTION_KEY in environment variables!")
-    print("="*80)
+    print("=" * 80)
     print("\nTo generate a valid Fernet key, run this command:")
-    print("\n  python -c \"from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())\"")
+    print(
+        '\n  python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"'
+    )
     print("\nThen add it to your .env file:")
     print("  ENCRYPTION_KEY=<generated_key>")
     print("\nExample .env entry:")
     print("  ENCRYPTION_KEY=xQzT-Hn8vYc6MZi2V7fKJ9kL3pN5rS8tA1wD4eG6hB0=")
-    print("\n" + "="*80 + "\n")
+    print("\n" + "=" * 80 + "\n")
     raise ValueError(f"Invalid ENCRYPTION_KEY: {str(e)}")
 
 
@@ -53,8 +56,8 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
         Applies the same 72-byte truncation as get_password_hash for consistency.
     """
     # Apply same truncation as get_password_hash
-    password_bytes = plain_password.encode('utf-8')[:72]
-    truncated_password = password_bytes.decode('utf-8', errors='ignore')
+    password_bytes = plain_password.encode("utf-8")[:72]
+    truncated_password = password_bytes.decode("utf-8", errors="ignore")
     return pwd_context.verify(truncated_password, hashed_password)
 
 
@@ -74,8 +77,8 @@ def get_password_hash(password: str) -> str:
     """
     # bcrypt can only handle passwords up to 72 bytes
     # Encode to bytes, truncate, then decode back for passlib
-    password_bytes = password.encode('utf-8')[:72]
-    truncated_password = password_bytes.decode('utf-8', errors='ignore')
+    password_bytes = password.encode("utf-8")[:72]
+    truncated_password = password_bytes.decode("utf-8", errors="ignore")
     return pwd_context.hash(truncated_password)
 
 

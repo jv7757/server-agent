@@ -1,6 +1,7 @@
 """
 权限相关的Pydantic模式
 """
+
 from datetime import datetime
 from typing import List
 from uuid import UUID
@@ -54,8 +55,7 @@ class PermissionCheck(BaseModel):
         valid_permissions = {"read", "write", "execute", "admin"}
         if v not in valid_permissions:
             raise ValueError(
-                f"Invalid permission: {v}. "
-                f"Valid permissions: {', '.join(valid_permissions)}"
+                f"Invalid permission: {v}. " f"Valid permissions: {', '.join(valid_permissions)}"
             )
         return v
 
@@ -72,7 +72,7 @@ class PermissionResponse(BaseModel):
     permissions: List[str] = Field(..., description="权限列表")
     created_at: datetime
 
-    @field_validator('permission_id', 'server_id', 'user_id', mode='before')
+    @field_validator("permission_id", "server_id", "user_id", mode="before")
     @classmethod
     def convert_uuid_to_str(cls, v):
         """将 UUID 转换为字符串"""
@@ -94,7 +94,7 @@ class UserPermissionItem(BaseModel):
     permissions: List[str]
     created_at: datetime
 
-    @field_validator('permission_id', 'server_id', mode='before')
+    @field_validator("permission_id", "server_id", mode="before")
     @classmethod
     def convert_uuid_to_str(cls, v):
         """将 UUID 转换为字符串"""
@@ -122,7 +122,7 @@ class ServerPermissionItem(BaseModel):
     permissions: List[str]
     created_at: datetime
 
-    @field_validator('permission_id', 'user_id', mode='before')
+    @field_validator("permission_id", "user_id", mode="before")
     @classmethod
     def convert_uuid_to_str(cls, v):
         """将 UUID 转换为字符串"""

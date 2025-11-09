@@ -1,6 +1,7 @@
 """
 安全工具函数单元测试
 """
+
 import pytest
 from jose import jwt
 
@@ -138,6 +139,7 @@ class TestJWTTokens:
 
         # 短暂延迟确保令牌过期
         import time
+
         time.sleep(0.1)
 
         with pytest.raises(JWTError):

@@ -1,6 +1,7 @@
 """
 Pydantic模式模块
 """
+
 from app.schemas.auth import (
     LoginRequest,
     LoginResponse,

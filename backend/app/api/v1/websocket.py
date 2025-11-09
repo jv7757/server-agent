@@ -2,6 +2,7 @@
 WebSocket连接路由
 支持SSH Terminal和实时监控
 """
+
 import asyncio
 import json
 from typing import Annotated
@@ -124,10 +125,7 @@ async def terminal_websocket(
         server = result.scalar_one_or_none()
 
         if not server:
-            await websocket.send_json({
-                "type": "error",
-                "message": "服务器不存在或无权访问"
-            })
+            await websocket.send_json({"type": "error", "message": "服务器不存在或无权访问"})
             return
 
         # 创建SSH服务
@@ -152,10 +150,9 @@ async def terminal_websocket(
             shell.settimeout(0.1)  # 非阻塞读取
 
             # 发送欢迎消息
-            await websocket.send_json({
-                "type": "output",
-                "data": "\r\n\033[32m连接到服务器成功!\033[0m\r\n\r\n"
-            })
+            await websocket.send_json(
+                {"type": "output", "data": "\r\n\033[32m连接到服务器成功!\033[0m\r\n\r\n"}
+            )
 
             # 创建读取任务
             async def read_ssh_output():
@@ -163,11 +160,8 @@ async def terminal_websocket(
                 while True:
                     try:
                         if shell.recv_ready():
-                            output = shell.recv(4096).decode('utf-8', errors='ignore')
-                            await websocket.send_json({
-                                "type": "output",
-                                "data": output
-                            })
+                            output = shell.recv(4096).decode("utf-8", errors="ignore")
+                            await websocket.send_json({"type": "output", "data": output})
                         await asyncio.sleep(0.01)
                     except Exception as e:
                         logger.error(f"SSH read error: {e}")
@@ -188,10 +182,7 @@ async def terminal_websocket(
 
                     elif data["type"] == "resize":
                         # 调整终端大小
-                        shell.resize_pty(
-                            width=data.get("cols", 80),
-                            height=data.get("rows", 24)
-                        )
+                        shell.resize_pty(width=data.get("cols", 80), height=data.get("rows", 24))
 
                 except WebSocketDisconnect:
                     logger.info(f"Terminal WebSocket disconnected: {connection_id}")
@@ -200,10 +191,7 @@ async def terminal_websocket(
                     logger.warning(f"Invalid JSON from client: {message}")
                 except Exception as e:
                     logger.error(f"Terminal error: {e}")
-                    await websocket.send_json({
-                        "type": "error",
-                        "message": str(e)
-                    })
+                    await websocket.send_json({"type": "error", "message": str(e)})
 
             # 取消读取任务
             read_task.cancel()
@@ -214,10 +202,7 @@ async def terminal_websocket(
 
         except Exception as e:
             logger.error(f"SSH connection error: {e}")
-            await websocket.send_json({
-                "type": "error",
-                "message": f"SSH连接失败: {str(e)}"
-            })
+            await websocket.send_json({"type": "error", "message": f"SSH连接失败: {str(e)}"})
 
         finally:
             # 清理SSH连接
@@ -259,45 +244,48 @@ async def monitoring_websocket(
         metrics_service = MetricsService(db)
 
         # 发送欢迎消息
-        await websocket.send_json({
-            "type": "connected",
-            "message": f"已连接到服务器 {server_id} 监控"
-        })
+        await websocket.send_json(
+            {"type": "connected", "message": f"已连接到服务器 {server_id} 监控"}
+        )
 
         # 持续推送监控数据
         while True:
             try:
                 # 获取当前监控数据
-                metrics = await metrics_service.get_current_metrics(
-                    server_id=server_id
-                )
+                metrics = await metrics_service.get_current_metrics(server_id=server_id)
 
                 if metrics:
-                    await websocket.send_json({
-                        "type": "metrics",
-                        "data": {
-                            "cpu": {
-                                "usage": metrics.cpu_usage_percent or 0,
-                                "cores": metrics.cpu_cores or 0,
+                    await websocket.send_json(
+                        {
+                            "type": "metrics",
+                            "data": {
+                                "cpu": {
+                                    "usage": metrics.cpu_usage_percent or 0,
+                                    "cores": metrics.cpu_cores or 0,
+                                },
+                                "memory": {
+                                    "usage": metrics.memory_usage_percent or 0,
+                                    "total": metrics.memory_total_mb or 0,
+                                    "used": metrics.memory_used_mb or 0,
+                                },
+                                "disk": {
+                                    "usage": metrics.disk_usage_percent or 0,
+                                    "total": metrics.disk_total_gb or 0,
+                                    "used": metrics.disk_used_gb or 0,
+                                },
+                                "network": {
+                                    "bytes_sent": metrics.network_bytes_sent or 0,
+                                    "bytes_recv": metrics.network_bytes_recv or 0,
+                                },
+                                "uptime": metrics.uptime_seconds or 0,
+                                "timestamp": (
+                                    metrics.collected_at.isoformat()
+                                    if metrics.collected_at
+                                    else None
+                                ),
                             },
-                            "memory": {
-                                "usage": metrics.memory_usage_percent or 0,
-                                "total": metrics.memory_total_mb or 0,
-                                "used": metrics.memory_used_mb or 0,
-                            },
-                            "disk": {
-                                "usage": metrics.disk_usage_percent or 0,
-                                "total": metrics.disk_total_gb or 0,
-                                "used": metrics.disk_used_gb or 0,
-                            },
-                            "network": {
-                                "bytes_sent": metrics.network_bytes_sent or 0,
-                                "bytes_recv": metrics.network_bytes_recv or 0,
-                            },
-                            "uptime": metrics.uptime_seconds or 0,
-                            "timestamp": metrics.collected_at.isoformat() if metrics.collected_at else None,
                         }
-                    })
+                    )
 
                 # 等待5秒
                 await asyncio.sleep(5)
@@ -307,10 +295,7 @@ async def monitoring_websocket(
                 break
             except Exception as e:
                 logger.error(f"Monitoring error: {e}")
-                await websocket.send_json({
-                    "type": "error",
-                    "message": str(e)
-                })
+                await websocket.send_json({"type": "error", "message": str(e)})
                 await asyncio.sleep(5)
 
     except Exception as e:

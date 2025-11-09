@@ -1,6 +1,7 @@
 """
 命令验证和安全检查
 """
+
 import re
 from typing import Tuple
 
@@ -13,32 +14,26 @@ DANGEROUS_COMMANDS = [
     r"rm\s+-rf\s+\*",
     r"rm\s+-fr\s+/",
     r":\(\)\{\s*:\|:&\s*\};:",  # Fork bomb
-
     # 磁盘操作
     r"mkfs\.",
     r"dd\s+if=.*of=/dev/",
     r"fdisk",
     r"parted",
-
     # 系统关机/重启
     r"shutdown",
     r"reboot",
     r"halt",
     r"poweroff",
     r"init\s+[06]",
-
     # 用户和权限
     r"userdel\s+-r",
     r"passwd\s+root",
-
     # 网络破坏
     r"iptables\s+-F",
     r"iptables\s+-X",
-
     # 内核模块
     r"rmmod",
     r"modprobe\s+-r",
-
     # 危险的重定向
     r">\s*/dev/sd[a-z]",
     r">\s*/dev/nvme",

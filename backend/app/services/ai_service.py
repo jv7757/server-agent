@@ -1,6 +1,7 @@
 """
 AI聊天服务
 """
+
 from typing import AsyncIterator, Dict, List
 from uuid import UUID
 
@@ -104,11 +105,13 @@ class AIService:
                     tool_calls = response["tool_calls"]
 
                     # 将AI的工具调用添加到消息历史
-                    messages.append({
-                        "role": "assistant",
-                        "content": response.get("content") or "",
-                        "tool_calls": tool_calls,
-                    })
+                    messages.append(
+                        {
+                            "role": "assistant",
+                            "content": response.get("content") or "",
+                            "tool_calls": tool_calls,
+                        }
+                    )
 
                     # 执行工具并收集结果
                     tool_results = []
@@ -122,12 +125,14 @@ class AIService:
                         # 执行工具
                         result = await self.ai_tools.execute_tool(tool_name, tool_args)
 
-                        tool_results.append({
-                            "role": "tool",
-                            "tool_call_id": tool_id,
-                            "name": tool_name,
-                            "content": str(result),
-                        })
+                        tool_results.append(
+                            {
+                                "role": "tool",
+                                "tool_call_id": tool_id,
+                                "name": tool_name,
+                                "content": str(result),
+                            }
+                        )
 
                     # 将工具结果添加到消息历史
                     messages.extend(tool_results)
@@ -274,8 +279,9 @@ class AIService:
         from sqlalchemy import func
 
         count_result = await self.db.execute(
-            select(func.count(func.distinct(ChatHistory.conversation_id)))
-            .where(ChatHistory.user_id == self.user_id)
+            select(func.count(func.distinct(ChatHistory.conversation_id))).where(
+                ChatHistory.user_id == self.user_id
+            )
         )
         total = count_result.scalar_one()
 
@@ -286,7 +292,7 @@ class AIService:
         subquery = (
             select(
                 ChatHistory.conversation_id,
-                func.max(ChatHistory.created_at).label("last_message_at")
+                func.max(ChatHistory.created_at).label("last_message_at"),
             )
             .where(ChatHistory.user_id == self.user_id)
             .group_by(ChatHistory.conversation_id)
@@ -298,8 +304,8 @@ class AIService:
             select(ChatHistory)
             .join(
                 subquery,
-                (ChatHistory.conversation_id == subquery.c.conversation_id) &
-                (ChatHistory.created_at == subquery.c.last_message_at)
+                (ChatHistory.conversation_id == subquery.c.conversation_id)
+                & (ChatHistory.created_at == subquery.c.last_message_at),
             )
             .order_by(desc(ChatHistory.created_at))
             .offset(offset)
@@ -312,7 +318,9 @@ class AIService:
         items = [
             {
                 "conversation_id": str(conv.conversation_id),
-                "last_message": conv.content[:100] + "..." if len(conv.content) > 100 else conv.content,
+                "last_message": (
+                    conv.content[:100] + "..." if len(conv.content) > 100 else conv.content
+                ),
                 "last_message_at": conv.created_at,
                 "role": conv.role,
             }

@@ -1,6 +1,7 @@
 """
 用户管理API路由（仅管理员）
 """
+
 from typing import Annotated
 from uuid import UUID
 
@@ -28,10 +29,7 @@ router = APIRouter()
 def check_admin_permission(current_user: User):
     """检查管理员权限"""
     if current_user.role != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="需要管理员权限"
-        )
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="需要管理员权限")
 
 
 @router.get("/users", response_model=UserListResponse)
@@ -74,7 +72,7 @@ async def get_users(
             or_(
                 User.username.ilike(search_pattern),
                 User.email.ilike(search_pattern),
-                User.full_name.ilike(search_pattern)
+                User.full_name.ilike(search_pattern),
             )
         )
 
@@ -89,7 +87,7 @@ async def get_users(
             or_(
                 User.username.ilike(search_pattern),
                 User.email.ilike(search_pattern),
-                User.full_name.ilike(search_pattern)
+                User.full_name.ilike(search_pattern),
             )
         )
 
@@ -97,24 +95,14 @@ async def get_users(
     total = len(total_result.all())
 
     # 分页和排序
-    query = (
-        query
-        .order_by(desc(User.created_at))
-        .offset((page - 1) * size)
-        .limit(size)
-    )
+    query = query.order_by(desc(User.created_at)).offset((page - 1) * size).limit(size)
 
     result = await db.execute(query)
     users = result.scalars().all()
 
     items = [UserResponse.model_validate(user) for user in users]
 
-    return UserListResponse(
-        total=total,
-        page=page,
-        size=size,
-        items=items
-    )
+    return UserListResponse(total=total, page=page, size=size, items=items)
 
 
 @router.get("/users/{user_id}", response_model=UserResponse)
@@ -134,10 +122,7 @@ async def get_user(
     user = result.scalar_one_or_none()
 
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="用户不存在"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="用户不存在")
 
     return UserResponse.model_validate(user)
 
@@ -162,10 +147,7 @@ async def create_user(
         logger.info(f"Admin {current_user.username} created user: {user.username}")
         return user
     except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 @router.put("/users/{user_id}", response_model=UserResponse)
@@ -189,10 +171,7 @@ async def update_user(
     user = result.scalar_one_or_none()
 
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="用户不存在"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="用户不存在")
 
     # 更新字段
     update_data = user_data.model_dump(exclude_unset=True)
@@ -203,10 +182,7 @@ async def update_user(
             select(User).where(User.email == update_data["email"], User.id != user_id)
         )
         if email_check.scalar_one_or_none():
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="邮箱已被使用"
-            )
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="邮箱已被使用")
         user.email = update_data["email"]
 
     if "full_name" in update_data:
@@ -215,6 +191,7 @@ async def update_user(
     if "password" in update_data:
         # 密码需要加密
         from app.core.security import hash_password
+
         user.hashed_password = hash_password(update_data["password"])
 
     await db.commit()
@@ -242,20 +219,14 @@ async def delete_user(
 
     # 不能删除自己
     if user_id == current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="不能删除自己的账号"
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="不能删除自己的账号")
 
     # 查询用户
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
 
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="用户不存在"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="用户不存在")
 
     username = user.username
 
@@ -286,20 +257,14 @@ async def update_user_role(
 
     # 不能修改自己的角色
     if user_id == current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="不能修改自己的角色"
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="不能修改自己的角色")
 
     # 查询用户
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
 
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="用户不存在"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="用户不存在")
 
     old_role = user.role
     user.role = role_data.role
@@ -332,8 +297,7 @@ async def update_user_status(
     # 不能修改自己的状态
     if user_id == current_user.id:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="不能修改自己的账号状态"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="不能修改自己的账号状态"
         )
 
     # 查询用户
@@ -341,10 +305,7 @@ async def update_user_status(
     user = result.scalar_one_or_none()
 
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="用户不存在"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="用户不存在")
 
     user.is_active = status_data.is_active
 
