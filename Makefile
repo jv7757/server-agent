@@ -29,7 +29,11 @@ lint-backend:
 # Frontend linting
 lint-frontend:
 	@echo "Running frontend code checks..."
-	cd frontend && npm run lint:check
+	@if [ ! -d "frontend/node_modules" ]; then \
+		echo "Error: frontend dependencies not installed. Run 'cd frontend && npm install' first."; \
+		exit 1; \
+	fi
+	cd frontend && ESLINT_USE_FLAT_CONFIG=false npm run lint:check
 	cd frontend && npm run format:check
 	@echo "✓ Frontend code checks passed"
 
@@ -47,8 +51,12 @@ format-backend:
 # Frontend formatting
 format-frontend:
 	@echo "Formatting frontend code..."
+	@if [ ! -d "frontend/node_modules" ]; then \
+		echo "Error: frontend dependencies not installed. Run 'cd frontend && npm install' first."; \
+		exit 1; \
+	fi
 	cd frontend && npm run format
-	cd frontend && npm run lint
+	cd frontend && ESLINT_USE_FLAT_CONFIG=false npm run lint
 	@echo "✓ Frontend code formatted"
 
 # All formatting
