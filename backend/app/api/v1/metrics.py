@@ -13,7 +13,6 @@ from app.dependencies import CurrentUser
 from app.schemas.metric import (
     CurrentMetricsResponse,
     MetricsHistoryResponse,
-    MetricsQueryParams,
     MetricsSummaryResponse,
     MetricResponse,
 )

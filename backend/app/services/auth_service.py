@@ -1,7 +1,6 @@
 """
 认证服务
 """
-from datetime import timedelta
 from uuid import UUID
 
 from sqlalchemy import or_, select

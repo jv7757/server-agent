@@ -26,4 +26,9 @@ per-file-ignores =
     __init__.py:F401,F403
     # Test files can have unused imports and redefined fixtures
     tests/*:F401,F811
+    # Complex API endpoints and service methods (to be refactored)
+    app/api/v1/audit_logs.py:C901
+    app/api/v1/websocket.py:C901
+    app/services/ai_service.py:C901
+    app/services/metrics_service.py:C901
 max-complexity = 10

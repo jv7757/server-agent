@@ -12,7 +12,6 @@ from app.dependencies import CurrentUser
 from app.schemas.execute import (
     BatchCommandRequest,
     BatchCommandResponse,
-    BatchCommandResult,
     CommandExecuteRequest,
     CommandExecuteResponse,
     CommandHistoryListResponse,

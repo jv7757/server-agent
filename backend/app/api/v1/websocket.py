@@ -7,7 +7,7 @@ import json
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect, status
+from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -154,7 +154,7 @@ async def terminal_websocket(
             # 发送欢迎消息
             await websocket.send_json({
                 "type": "output",
-                "data": f"\r\n\033[32m连接到服务器成功!\033[0m\r\n\r\n"
+                "data": "\r\n\033[32m连接到服务器成功!\033[0m\r\n\r\n"
             })
 
             # 创建读取任务

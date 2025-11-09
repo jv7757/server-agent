@@ -83,10 +83,10 @@ async def get_current_user_ws(
             raise ValueError("Inactive user")
 
         return user
-    except ValueError as e:
-        await websocket.close(code=status.WS_1008_POLICY_VIOLATION, reason=str(e))
+    except ValueError as value_error:
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION, reason=str(value_error))
         raise
-    except Exception as e:
+    except Exception:
         await websocket.close(code=status.WS_1011_INTERNAL_ERROR, reason="Authentication failed")
         raise
 

@@ -167,7 +167,7 @@ class SSHService:
             await self.connect()
 
             # 执行简单命令测试
-            result = await self.execute_command("echo 'Connection test'", timeout=5)
+            await self.execute_command("echo 'Connection test'", timeout=5)
 
             latency = int((time.time() - start_time) * 1000)
 

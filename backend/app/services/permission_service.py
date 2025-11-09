@@ -418,24 +418,24 @@ class PermissionService:
 
         if min_permission == "read":
             permission_conditions = [
-                UserServerPermission.can_read == True,
-                UserServerPermission.can_write == True,
-                UserServerPermission.can_execute == True,
-                UserServerPermission.can_admin == True,
+                UserServerPermission.can_read.is_(True),
+                UserServerPermission.can_write.is_(True),
+                UserServerPermission.can_execute.is_(True),
+                UserServerPermission.can_admin.is_(True),
             ]
         elif min_permission == "write":
             permission_conditions = [
-                UserServerPermission.can_write == True,
-                UserServerPermission.can_execute == True,
-                UserServerPermission.can_admin == True,
+                UserServerPermission.can_write.is_(True),
+                UserServerPermission.can_execute.is_(True),
+                UserServerPermission.can_admin.is_(True),
             ]
         elif min_permission == "execute":
             permission_conditions = [
-                UserServerPermission.can_execute == True,
-                UserServerPermission.can_admin == True,
+                UserServerPermission.can_execute.is_(True),
+                UserServerPermission.can_admin.is_(True),
             ]
         elif min_permission == "admin":
-            permission_conditions = [UserServerPermission.can_admin == True]
+            permission_conditions = [UserServerPermission.can_admin.is_(True)]
 
         # 获取有权限的服务器
         if permission_conditions:

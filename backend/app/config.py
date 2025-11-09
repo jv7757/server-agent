@@ -52,7 +52,6 @@ class Settings(BaseSettings):
     anthropic_api_key: str | None = None
     ollama_base_url: str = "http://localhost:11434"
 
-
     # CORS配置
     allowed_origins: str = "http://localhost:5173"
 

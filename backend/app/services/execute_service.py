@@ -6,7 +6,6 @@ from uuid import UUID
 
 from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload
 
 from app.core.command_validator import CommandValidator
 from app.models.audit import AuditLog

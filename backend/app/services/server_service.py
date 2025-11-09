@@ -7,9 +7,8 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
-from app.core.security import decrypt_ssh_credential, encrypt_ssh_credential
+from app.core.security import encrypt_ssh_credential
 from app.models.server import Server
-from app.models.user import User
 from app.schemas.server import (
     ConnectionTestResponse,
     ServerCreate,

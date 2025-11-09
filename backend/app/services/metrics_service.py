@@ -9,7 +9,6 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.metric import ServerMetric
-from app.models.server import Server
 from app.services.ssh_service import SSHService
 from app.utils.logger import logger
 

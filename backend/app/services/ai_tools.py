@@ -224,7 +224,7 @@ class AITools:
                 },
             }
 
-        except ValueError as e:
+        except ValueError:
             return {
                 "success": False,
                 "error": "Invalid server ID format",
