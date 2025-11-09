@@ -11,8 +11,8 @@ from app.schemas.auth import (
     TokenResponse,
 )
 from app.schemas.chat import (
-    ChatMessagesResponse,
     ChatMessageResponse,
+    ChatMessagesResponse,
     ChatRequest,
     ChatResponse,
     ChatStreamRequest,

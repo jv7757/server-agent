@@ -7,12 +7,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.dependencies import CurrentUser, get_auth_service
-from app.schemas.auth import (
-    LoginRequest,
-    LoginResponse,
-    RefreshTokenRequest,
-    RefreshTokenResponse,
-)
+from app.schemas.auth import LoginRequest, LoginResponse, RefreshTokenRequest, RefreshTokenResponse
 from app.schemas.user import PasswordChange, UserCreate, UserResponse
 from app.services.auth_service import AuthService
 

@@ -13,11 +13,11 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
 
 if TYPE_CHECKING:
-    from app.models.user import User
+    from app.models.audit import AuditLog
+    from app.models.chat import ChatHistory
     from app.models.metric import ServerMetric
     from app.models.permission import UserServerPermission
-    from app.models.chat import ChatHistory
-    from app.models.audit import AuditLog
+    from app.models.user import User
 
 
 class Server(Base):

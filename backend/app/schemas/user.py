@@ -7,7 +7,6 @@ from uuid import UUID
 
 from pydantic import BaseModel, EmailStr, Field
 
-
 # ========== 用户基础模式 ==========
 
 

@@ -7,10 +7,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
-from app.dependencies import (
-    CurrentUser,
-    get_permission_service,
-)
+from app.dependencies import CurrentUser, get_permission_service
 from app.schemas.permission import (
     AccessibleServersResponse,
     PermissionCheck,

@@ -7,7 +7,6 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field, field_validator
 
-
 # ========== 聊天请求 ==========
 
 

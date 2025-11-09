@@ -64,9 +64,8 @@ async def get_servers(
     server_service: Annotated[ServerService, Depends(get_server_service)],
     page: int = Query(1, ge=1, description="页码"),
     size: int = Query(20, ge=1, le=100, description="每页数量"),
-    status: str | None = Query(
-        None, pattern="^(online|offline|error|unknown)$", description="状态筛选"
-    ),
+    status: str
+    | None = Query(None, pattern="^(online|offline|error|unknown)$", description="状态筛选"),
     tags: str | None = Query(None, description="标签筛选（逗号分隔）"),
     search: str | None = Query(None, description="搜索关键词"),
 ):

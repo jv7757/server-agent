@@ -7,7 +7,6 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-
 # ========== 指标响应模式 ==========
 
 

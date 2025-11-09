@@ -13,9 +13,9 @@ from app.database import get_db
 from app.dependencies import CurrentUser
 from app.schemas.metric import (
     CurrentMetricsResponse,
+    MetricResponse,
     MetricsHistoryResponse,
     MetricsSummaryResponse,
-    MetricResponse,
 )
 from app.services.metrics_service import MetricsService
 from app.services.server_service import ServerService

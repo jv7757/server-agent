@@ -5,6 +5,7 @@
 import pytest
 from jose import jwt
 
+from app.config import settings
 from app.core.security import (
     create_access_token,
     create_refresh_token,
@@ -14,7 +15,6 @@ from app.core.security import (
     get_password_hash,
     verify_password,
 )
-from app.config import settings
 
 
 @pytest.mark.unit
@@ -131,6 +131,7 @@ class TestJWTTokens:
     def test_verify_expired_token(self):
         """测试验证过期令牌"""
         from datetime import timedelta
+
         from jose import JWTError
 
         data = {"sub": "test_user"}

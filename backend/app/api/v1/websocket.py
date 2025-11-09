@@ -16,8 +16,8 @@ from app.database import get_db
 from app.dependencies import get_current_user_ws
 from app.models.server import Server
 from app.models.user import User
-from app.services.ssh_service import SSHService
 from app.services.metrics_service import MetricsService
+from app.services.ssh_service import SSHService
 from app.utils.logger import logger
 
 router = APIRouter()
@@ -244,9 +244,7 @@ async def monitoring_websocket(
         metrics_service = MetricsService(db)
 
         # 发送欢迎消息
-        await websocket.send_json(
-            {"type": "connected", "message": f"已连接到服务器 {server_id} 监控"}
-        )
+        await websocket.send_json({"type": "connected", "message": f"已连接到服务器 {server_id} 监控"})
 
         # 持续推送监控数据
         while True:

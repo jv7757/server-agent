@@ -296,9 +296,7 @@ async def update_user_status(
 
     # 不能修改自己的状态
     if user_id == current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="不能修改自己的账号状态"
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="不能修改自己的账号状态")
 
     # 查询用户
     result = await db.execute(select(User).where(User.id == user_id))

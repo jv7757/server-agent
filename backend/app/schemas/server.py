@@ -7,7 +7,6 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field, field_validator
 
-
 # ========== 服务器基础模式 ==========
 
 
@@ -121,8 +120,6 @@ class ServerQueryParams(BaseModel):
 
     page: int = Field(default=1, ge=1, description="页码")
     size: int = Field(default=20, ge=1, le=100, description="每页数量")
-    status: str | None = Field(
-        None, pattern="^(online|offline|error|unknown)$", description="状态筛选"
-    )
+    status: str | None = Field(None, pattern="^(online|offline|error|unknown)$", description="状态筛选")
     tags: str | None = Field(None, description="标签筛选（逗号分隔）")
     search: str | None = Field(None, description="搜索关键词（名称或主机）")
