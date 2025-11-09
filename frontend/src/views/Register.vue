@@ -55,12 +55,7 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button
-            type="primary"
-            :loading="loading"
-            style="width: 100%"
-            @click="handleRegister"
-          >
+          <el-button type="primary" :loading="loading" style="width: 100%" @click="handleRegister">
             {{ $t('register.registerButton') }}
           </el-button>
         </el-form-item>
@@ -165,9 +160,11 @@ const registerRules: FormRules = {
  * 处理注册
  */
 const handleRegister = async () => {
-  if (!registerFormRef.value) return
+  if (!registerFormRef.value) {
+    return
+  }
 
-  await registerFormRef.value.validate(async (valid) => {
+  await registerFormRef.value.validate(async valid => {
     if (valid) {
       loading.value = true
       try {

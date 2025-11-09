@@ -14,27 +14,22 @@ import type {
 /**
  * 发送消息
  */
-export const sendMessage = (data: ChatRequest) => {
-  return post<ChatResponse>('/chat/chat', data)
-}
+export const sendMessage = (data: ChatRequest) => post<ChatResponse>('/chat/chat', data)
 
 /**
  * 获取会话列表
  */
-export const getConversations = (params?: PaginationParams) => {
-  return get<PaginatedResponse<Conversation>>('/chat/conversations', { params })
-}
+export const getConversations = (params?: PaginationParams) =>
+  get<PaginatedResponse<Conversation>>('/chat/conversations', { params })
 
 /**
  * 获取会话消息
  */
-export const getConversationMessages = (conversationId: string, params?: PaginationParams) => {
-  return get<PaginatedResponse<ChatMessage>>(`/chat/conversations/${conversationId}`, { params })
-}
+export const getConversationMessages = (conversationId: string, params?: PaginationParams) =>
+  get<PaginatedResponse<ChatMessage>>(`/chat/conversations/${conversationId}`, { params })
 
 /**
  * 删除会话
  */
-export const deleteConversation = (conversationId: string) => {
-  return del(`/chat/conversations/${conversationId}`)
-}
+export const deleteConversation = (conversationId: string) =>
+  del(`/chat/conversations/${conversationId}`)

@@ -46,8 +46,8 @@ module.exports = {
     'no-unused-vars': 'off', // Use TypeScript's version instead
     'prefer-const': 'error',
     'no-var': 'error',
-    'eqeqeq': ['error', 'always'],
-    'curly': ['error', 'all'],
+    eqeqeq: ['error', 'always'],
+    curly: ['error', 'all'],
     'arrow-body-style': ['error', 'as-needed'],
   },
   ignorePatterns: ['dist', 'node_modules', '*.d.ts'],

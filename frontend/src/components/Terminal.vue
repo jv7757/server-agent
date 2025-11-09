@@ -14,18 +14,8 @@
           <el-icon><CircleClose /></el-icon>
           未连接
         </el-tag>
-        <el-button
-          :icon="FullScreen"
-          circle
-          size="small"
-          @click="toggleFullscreen"
-        />
-        <el-button
-          :icon="Close"
-          circle
-          size="small"
-          @click="handleClose"
-        />
+        <el-button :icon="FullScreen" circle size="small" @click="toggleFullscreen" />
+        <el-button :icon="Close" circle size="small" @click="handleClose" />
       </div>
     </div>
     <div ref="terminalRef" class="terminal-body"></div>
@@ -35,13 +25,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import { ElMessage } from 'element-plus'
-import {
-  Monitor,
-  FullScreen,
-  Close,
-  CircleCheck,
-  CircleClose,
-} from '@element-plus/icons-vue'
+import { Monitor, FullScreen, Close, CircleCheck, CircleClose } from '@element-plus/icons-vue'
 import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import { WebLinksAddon } from 'xterm-addon-web-links'
@@ -71,7 +55,9 @@ let ws: WebSocketClient | null = null
 
 // 初始化Terminal
 const initTerminal = () => {
-  if (!terminalRef.value) return
+  if (!terminalRef.value) {
+    return
+  }
 
   // 创建Terminal实例
   terminal = new Terminal({
@@ -116,7 +102,7 @@ const initTerminal = () => {
   window.addEventListener('resize', handleResize)
 
   // 监听用户输入
-  terminal.onData((data) => {
+  terminal.onData(data => {
     if (ws && ws.isConnected) {
       ws.send({
         type: 'input',
@@ -135,7 +121,7 @@ const connectWebSocket = () => {
       connected.value = true
       terminal?.writeln('\x1b[32m正在连接到服务器...\x1b[0m')
     },
-    onMessage: (data) => {
+    onMessage: data => {
       if (data.type === 'output') {
         terminal?.write(data.data)
       } else if (data.type === 'error') {
@@ -143,7 +129,7 @@ const connectWebSocket = () => {
         ElMessage.error(data.message)
       }
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Terminal WebSocket error:', error)
       ElMessage.error('连接失败')
     },
@@ -175,10 +161,14 @@ const handleResize = () => {
 
 // 全屏切换
 const toggleFullscreen = () => {
-  if (!terminalRef.value) return
+  if (!terminalRef.value) {
+    return
+  }
 
   const container = terminalRef.value.parentElement
-  if (!container) return
+  if (!container) {
+    return
+  }
 
   if (!document.fullscreenElement) {
     container.requestFullscreen().then(() => {
@@ -214,11 +204,14 @@ onBeforeUnmount(() => {
 })
 
 // 监听serverId变化
-watch(() => props.serverId, () => {
-  cleanup()
-  initTerminal()
-  connectWebSocket()
-})
+watch(
+  () => props.serverId,
+  () => {
+    cleanup()
+    initTerminal()
+    connectWebSocket()
+  }
+)
 </script>
 
 <style scoped lang="scss">

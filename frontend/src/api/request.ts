@@ -17,7 +17,7 @@ const request: AxiosInstance = axios.create({
 
 // 请求拦截器
 request.interceptors.request.use(
-  (config) => {
+  config => {
     // 添加 token
     const authStore = useAuthStore()
     if (authStore.token) {
@@ -25,7 +25,7 @@ request.interceptors.request.use(
     }
     return config
   },
-  (error) => {
+  error => {
     console.error('请求错误:', error)
     return Promise.reject(error)
   }
@@ -33,10 +33,8 @@ request.interceptors.request.use(
 
 // 响应拦截器
 request.interceptors.response.use(
-  (response: AxiosResponse) => {
-    return response
-  },
-  async (error) => {
+  (response: AxiosResponse) => response,
+  async error => {
     if (error.response) {
       const { status, data } = error.response
 
@@ -89,26 +87,14 @@ request.interceptors.response.use(
 export default request
 
 // 泛型请求方法
-export const get = <T = any>(url: string, config?: AxiosRequestConfig): Promise<T> => {
-  return request.get(url, config).then((res) => res.data)
-}
+export const get = <T = any>(url: string, config?: AxiosRequestConfig): Promise<T> =>
+  request.get(url, config).then(res => res.data)
 
-export const post = <T = any>(
-  url: string,
-  data?: any,
-  config?: AxiosRequestConfig
-): Promise<T> => {
-  return request.post(url, data, config).then((res) => res.data)
-}
+export const post = <T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> =>
+  request.post(url, data, config).then(res => res.data)
 
-export const put = <T = any>(
-  url: string,
-  data?: any,
-  config?: AxiosRequestConfig
-): Promise<T> => {
-  return request.put(url, data, config).then((res) => res.data)
-}
+export const put = <T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> =>
+  request.put(url, data, config).then(res => res.data)
 
-export const del = <T = any>(url: string, config?: AxiosRequestConfig): Promise<T> => {
-  return request.delete(url, config).then((res) => res.data)
-}
+export const del = <T = any>(url: string, config?: AxiosRequestConfig): Promise<T> =>
+  request.delete(url, config).then(res => res.data)

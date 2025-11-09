@@ -75,7 +75,7 @@ export const useServersStore = defineStore('servers', () => {
     isLoading.value = true
     try {
       const updatedServer = await serversApi.updateServer(serverId, data)
-      const index = servers.value.findIndex((s) => s.id === serverId)
+      const index = servers.value.findIndex(s => s.id === serverId)
       if (index !== -1) {
         servers.value[index] = updatedServer
       }
@@ -99,7 +99,7 @@ export const useServersStore = defineStore('servers', () => {
     isLoading.value = true
     try {
       await serversApi.deleteServer(serverId)
-      servers.value = servers.value.filter((s) => s.id !== serverId)
+      servers.value = servers.value.filter(s => s.id !== serverId)
       if (currentServer.value?.id === serverId) {
         currentServer.value = null
       }
@@ -134,9 +134,7 @@ export const useServersStore = defineStore('servers', () => {
   /**
    * 根据 ID 获取服务器
    */
-  const getServerById = (serverId: string) => {
-    return servers.value.find((s) => s.id === serverId)
-  }
+  const getServerById = (serverId: string) => servers.value.find(s => s.id === serverId)
 
   return {
     // State

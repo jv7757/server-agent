@@ -22,9 +22,7 @@
                 :value="server.id"
               >
                 <span style="float: left">{{ server.name }}</span>
-                <span
-                  style="float: right; color: var(--el-text-color-secondary); font-size: 13px"
-                >
+                <span style="float: right; color: var(--el-text-color-secondary); font-size: 13px">
                   {{ server.host }}
                 </span>
               </el-option>
@@ -40,11 +38,7 @@
           :server-id="selectedServerId"
           :title="`Terminal - ${currentServerName}`"
         />
-        <el-empty
-          v-else
-          description="请选择一个服务器开始SSH连接"
-          :image-size="200"
-        />
+        <el-empty v-else description="请选择一个服务器开始SSH连接" :image-size="200" />
       </div>
     </el-card>
   </div>
@@ -64,7 +58,7 @@ const selectedServerId = ref<string>('')
 
 const servers = computed(() => serversStore.servers)
 const currentServerName = computed(() => {
-  const server = servers.value.find((s) => s.id === selectedServerId.value)
+  const server = servers.value.find(s => s.id === selectedServerId.value)
   return server?.name || 'Unknown'
 })
 
@@ -78,7 +72,7 @@ onMounted(async () => {
 
   // 如果URL中有server_id参数，自动选择
   const serverId = route.query.server_id as string
-  if (serverId && servers.value.some((s) => s.id === serverId)) {
+  if (serverId && servers.value.some(s => s.id === serverId)) {
     selectedServerId.value = serverId
   } else if (servers.value.length > 0) {
     // 默认选择第一个

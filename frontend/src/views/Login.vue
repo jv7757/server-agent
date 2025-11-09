@@ -38,12 +38,7 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button
-            type="primary"
-            :loading="loading"
-            style="width: 100%"
-            @click="handleLogin"
-          >
+          <el-button type="primary" :loading="loading" style="width: 100%" @click="handleLogin">
             {{ $t('login.loginButton') }}
           </el-button>
         </el-form-item>
@@ -111,9 +106,11 @@ const loginRules: FormRules = {
  * 处理登录
  */
 const handleLogin = async () => {
-  if (!loginFormRef.value) return
+  if (!loginFormRef.value) {
+    return
+  }
 
-  await loginFormRef.value.validate(async (valid) => {
+  await loginFormRef.value.validate(async valid => {
     if (valid) {
       loading.value = true
       try {

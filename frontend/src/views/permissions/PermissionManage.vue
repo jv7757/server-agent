@@ -4,7 +4,7 @@
       <template #header>
         <div class="card-header">
           <h3>权限管理</h3>
-          <el-button type="primary" @click="handleAddPermission" v-if="selectedServerId">
+          <el-button v-if="selectedServerId" type="primary" @click="handleAddPermission">
             <el-icon><Plus /></el-icon>
             授予权限
           </el-button>
@@ -34,8 +34,8 @@
       <!-- 权限列表 -->
       <el-table
         v-if="selectedServerId"
-        :data="permissions"
         v-loading="loading"
+        :data="permissions"
         stripe
         style="width: 100%"
       >
@@ -60,12 +60,7 @@
         </el-table-column>
         <el-table-column label="操作" width="100" fixed="right">
           <template #default="{ row }">
-            <el-button
-              type="danger"
-              size="small"
-              link
-              @click="handleRevokePermission(row)"
-            >
+            <el-button type="danger" size="small" link @click="handleRevokePermission(row)">
               撤销
             </el-button>
           </template>
@@ -80,27 +75,18 @@
         :total="total"
         :page-sizes="[10, 20, 50, 100]"
         layout="total, sizes, prev, pager, next, jumper"
+        style="margin-top: 20px; justify-content: flex-end"
         @current-change="fetchPermissions"
         @size-change="fetchPermissions"
-        style="margin-top: 20px; justify-content: flex-end"
       />
 
       <!-- 提示信息 -->
-      <el-empty
-        v-if="!selectedServerId"
-        description="请先选择一个服务器"
-        :image-size="150"
-      />
+      <el-empty v-if="!selectedServerId" description="请先选择一个服务器" :image-size="150" />
     </el-card>
 
     <!-- 授予权限对话框 -->
-    <el-dialog
-      v-model="grantDialogVisible"
-      title="授予权限"
-      width="500px"
-      @close="resetGrantForm"
-    >
-      <el-form :model="grantForm" :rules="grantRules" ref="grantFormRef" label-width="80px">
+    <el-dialog v-model="grantDialogVisible" title="授予权限" width="500px" @close="resetGrantForm">
+      <el-form ref="grantFormRef" :model="grantForm" :rules="grantRules" label-width="80px">
         <el-form-item label="用户" prop="target_user_id">
           <el-select
             v-model="grantForm.target_user_id"
@@ -135,7 +121,7 @@
       </el-form>
       <template #footer>
         <el-button @click="grantDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleGrantSubmit" :loading="submitting">
+        <el-button type="primary" :loading="submitting" @click="handleGrantSubmit">
           确定
         </el-button>
       </template>
@@ -188,9 +174,7 @@ const grantRules: FormRules = {
 }
 
 // 格式化日期
-const formatDate = (dateStr: string) => {
-  return new Date(dateStr).toLocaleString('zh-CN')
-}
+const formatDate = (dateStr: string) => new Date(dateStr).toLocaleString('zh-CN')
 
 // 获取权限标签类型
 const getPermissionTagType = (permission: string) => {
@@ -237,7 +221,9 @@ const fetchUsers = async () => {
 
 // 获取权限列表
 const fetchPermissions = async () => {
-  if (!selectedServerId.value) return
+  if (!selectedServerId.value) {
+    return
+  }
 
   loading.value = true
   try {
@@ -276,10 +262,14 @@ const resetGrantForm = () => {
 
 // 提交授予权限
 const handleGrantSubmit = async () => {
-  if (!grantFormRef.value) return
+  if (!grantFormRef.value) {
+    return
+  }
 
-  await grantFormRef.value.validate(async (valid) => {
-    if (!valid) return
+  await grantFormRef.value.validate(async valid => {
+    if (!valid) {
+      return
+    }
 
     submitting.value = true
     try {

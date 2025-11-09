@@ -53,12 +53,7 @@
         <el-collapse v-model="advancedOpen" class="advanced-options">
           <el-collapse-item :title="$t('execute.advancedOptions')" name="advanced">
             <el-form-item :label="$t('execute.timeout')">
-              <el-input-number
-                v-model="executeForm.timeout"
-                :min="1"
-                :max="3600"
-                :step="10"
-              />
+              <el-input-number v-model="executeForm.timeout" :min="1" :max="3600" :step="10" />
               <el-text type="info" size="small" style="margin-left: 10px">
                 {{ $t('execute.timeoutUnit') }}
               </el-text>
@@ -105,11 +100,7 @@
         <div class="card-header">
           <el-icon><Document /></el-icon>
           <span>{{ $t('execute.result') }}</span>
-          <el-tag
-            :type="resultType"
-            size="small"
-            style="margin-left: 10px"
-          >
+          <el-tag :type="resultType" size="small" style="margin-left: 10px">
             {{ $t('execute.exitCode') }}: {{ executeStore.currentResult.exit_code }}
           </el-tag>
         </div>
@@ -164,12 +155,7 @@
         <div class="card-header">
           <el-icon><Clock /></el-icon>
           <span>{{ $t('execute.history') }}</span>
-          <el-button
-            link
-            :icon="Refresh"
-            @click="loadHistory"
-            style="margin-left: auto"
-          >
+          <el-button link :icon="Refresh" style="margin-left: auto" @click="loadHistory">
             {{ $t('common.refresh') }}
           </el-button>
         </div>
@@ -232,12 +218,7 @@
     </el-card>
 
     <!-- 详情对话框 -->
-    <el-dialog
-      v-model="detailVisible"
-      :title="$t('execute.detail')"
-      width="800px"
-      destroy-on-close
-    >
+    <el-dialog v-model="detailVisible" :title="$t('execute.detail')" width="800px" destroy-on-close>
       <el-descriptions v-if="currentDetail" :column="1" border>
         <el-descriptions-item :label="$t('execute.server')">
           {{ currentDetail.server_name }}
@@ -251,7 +232,11 @@
           </el-tag>
         </el-descriptions-item>
         <el-descriptions-item :label="$t('execute.executionTime')">
-          {{ currentDetail.execution_time_ms ? (currentDetail.execution_time_ms / 1000).toFixed(2) + 's' : 'N/A' }}
+          {{
+            currentDetail.execution_time_ms
+              ? (currentDetail.execution_time_ms / 1000).toFixed(2) + 's'
+              : 'N/A'
+          }}
         </el-descriptions-item>
         <el-descriptions-item :label="$t('common.time')">
           {{ formatDate(currentDetail.executed_at) }}
@@ -297,14 +282,14 @@ const executeForm = ref<CommandExecuteRequest>({
 
 const advancedOpen = ref<string[]>([])
 const servers = computed(() => serversStore.servers)
-const canExecute = computed(
-  () => executeForm.value.server_id && executeForm.value.command.trim()
-)
+const canExecute = computed(() => executeForm.value.server_id && executeForm.value.command.trim())
 
 // Result display
 const resultType = computed(() => {
   const exitCode = executeStore.currentResult?.exit_code
-  if (exitCode === undefined) return 'info'
+  if (exitCode === undefined) {
+    return 'info'
+  }
   return exitCode === 0 ? 'success' : 'danger'
 })
 
@@ -321,7 +306,9 @@ const handleServerChange = () => {
 }
 
 const handleExecute = async () => {
-  if (!canExecute.value) return
+  if (!canExecute.value) {
+    return
+  }
 
   const success = await executeStore.execute(executeForm.value)
   if (success) {
@@ -360,19 +347,21 @@ const copyToClipboard = async (text: string) => {
   }
 }
 
-const formatDate = (date: string) => {
-  return new Date(date).toLocaleString()
-}
+const formatDate = (date: string) => new Date(date).toLocaleString()
 
 const getStatusType = (row: CommandHistory) => {
   const exitCode = row.exit_code
-  if (exitCode === null || exitCode === undefined) return 'info'
+  if (exitCode === null || exitCode === undefined) {
+    return 'info'
+  }
   return exitCode === 0 ? 'success' : 'danger'
 }
 
 const getStatusText = (row: CommandHistory) => {
   const exitCode = row.exit_code
-  if (exitCode === null || exitCode === undefined) return t('common.unknown')
+  if (exitCode === null || exitCode === undefined) {
+    return t('common.unknown')
+  }
   return exitCode === 0 ? t('common.success') : t('common.failed')
 }
 

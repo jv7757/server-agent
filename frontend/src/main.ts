@@ -20,8 +20,8 @@ const i18n = createI18n({
   fallbackLocale: 'en-US',
   messages: {
     'zh-CN': zhCN,
-    'en-US': enUS
-  }
+    'en-US': enUS,
+  },
 })
 
 // 创建 Pinia 实例

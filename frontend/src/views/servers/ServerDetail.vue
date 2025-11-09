@@ -2,11 +2,11 @@
   <div class="server-detail">
     <el-page-header @back="goBack">
       <template #content>
-        <span class="text-large font-600 mr-3">{{$t('servers.detailTitle')}}</span>
+        <span class="text-large font-600 mr-3">{{ $t('servers.detailTitle') }}</span>
       </template>
     </el-page-header>
 
-    <el-card style="margin-top: 20px" shadow="never" v-loading="loading">
+    <el-card v-loading="loading" style="margin-top: 20px" shadow="never">
       <h3>{{ $t('common.comingSoon') }}</h3>
       <p>{{ $t('common.featureInDevelopment') }}</p>
     </el-card>

@@ -18,10 +18,7 @@
         >
           <div style="display: flex; justify-content: space-between; align-items: center">
             <span>{{ server.name }}</span>
-            <el-tag
-              :type="server.status === 'online' ? 'success' : 'danger'"
-              size="small"
-            >
+            <el-tag :type="server.status === 'online' ? 'success' : 'danger'" size="small">
               {{ server.status }}
             </el-tag>
           </div>
@@ -39,12 +36,8 @@
             </div>
             <div class="metric-info">
               <div class="metric-label">CPU使用率</div>
-              <div class="metric-value">
-                {{ currentMetrics.cpu?.usage?.toFixed(1) || 0 }}%
-              </div>
-              <div class="metric-detail">
-                {{ currentMetrics.cpu?.cores || 0 }} 核心
-              </div>
+              <div class="metric-value">{{ currentMetrics.cpu?.usage?.toFixed(1) || 0 }}%</div>
+              <div class="metric-detail">{{ currentMetrics.cpu?.cores || 0 }} 核心</div>
             </div>
           </div>
           <el-progress
@@ -61,9 +54,7 @@
             </div>
             <div class="metric-info">
               <div class="metric-label">内存使用率</div>
-              <div class="metric-value">
-                {{ currentMetrics.memory?.usage?.toFixed(1) || 0 }}%
-              </div>
+              <div class="metric-value">{{ currentMetrics.memory?.usage?.toFixed(1) || 0 }}%</div>
               <div class="metric-detail">
                 {{ formatBytes(currentMetrics.memory?.used || 0) }} /
                 {{ formatBytes(currentMetrics.memory?.total || 0) }}
@@ -84,9 +75,7 @@
             </div>
             <div class="metric-info">
               <div class="metric-label">磁盘使用率</div>
-              <div class="metric-value">
-                {{ currentMetrics.disk?.usage?.toFixed(1) || 0 }}%
-              </div>
+              <div class="metric-value">{{ currentMetrics.disk?.usage?.toFixed(1) || 0 }}%</div>
               <div class="metric-detail">
                 {{ currentMetrics.disk?.used?.toFixed(1) || 0 }} GB /
                 {{ currentMetrics.disk?.total?.toFixed(1) || 0 }} GB
@@ -111,8 +100,8 @@
                 {{ formatBytes(currentMetrics.network?.bytes_sent || 0) }}
               </div>
               <div class="metric-detail">
-                ↑ {{ formatBytes(currentMetrics.network?.bytes_sent || 0) }} /
-                ↓ {{ formatBytes(currentMetrics.network?.bytes_recv || 0) }}
+                ↑ {{ formatBytes(currentMetrics.network?.bytes_sent || 0) }} / ↓
+                {{ formatBytes(currentMetrics.network?.bytes_recv || 0) }}
               </div>
             </div>
           </div>
@@ -127,18 +116,14 @@
             <el-icon v-else><Loading /></el-icon>
             {{ wsConnected ? '实时连接' : '连接中...' }}
           </el-tag>
-          <span class="update-time">
-            最后更新: {{ lastUpdateTime }}
-          </span>
-          <span class="uptime">
-            运行时间: {{ formatUptime(currentMetrics.uptime || 0) }}
-          </span>
+          <span class="update-time"> 最后更新: {{ lastUpdateTime }} </span>
+          <span class="uptime"> 运行时间: {{ formatUptime(currentMetrics.uptime || 0) }} </span>
           <el-button
             type="primary"
             :icon="Refresh"
             :loading="isCollecting"
-            @click="handleCollectMetrics"
             style="margin-left: auto"
+            @click="handleCollectMetrics"
           >
             {{ isCollecting ? '采集中...' : '立即采集' }}
           </el-button>
@@ -167,25 +152,14 @@
       </el-card>
     </template>
 
-    <el-empty
-      v-else
-      description="请选择一个服务器查看监控数据"
-      :image-size="200"
-    />
+    <el-empty v-else description="请选择一个服务器查看监控数据" :image-size="200" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
-import {
-  Cpu,
-  Memo,
-  Files,
-  Connection,
-  Loading,
-  Refresh,
-} from '@element-plus/icons-vue'
+import { Cpu, Memo, Files, Connection, Loading, Refresh } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 import type { ECharts } from 'echarts'
 import { useServersStore } from '@/stores/servers'
@@ -217,7 +191,9 @@ const timePeriods = [
 
 // WebSocket连接
 const connectWebSocket = () => {
-  if (!selectedServerId.value) return
+  if (!selectedServerId.value) {
+    return
+  }
 
   // 断开旧连接
   ws?.close()
@@ -229,7 +205,7 @@ const connectWebSocket = () => {
       wsConnected.value = true
       console.log('Monitoring WebSocket connected')
     },
-    onMessage: (data) => {
+    onMessage: data => {
       if (data.type === 'metrics') {
         currentMetrics.value = data.data
         lastUpdateTime.value = new Date().toLocaleTimeString()
@@ -256,7 +232,9 @@ const connectWebSocket = () => {
 
 // 初始化图表
 const initChart = () => {
-  if (!chartRef.value) return
+  if (!chartRef.value) {
+    return
+  }
 
   chart = echarts.init(chartRef.value)
 
@@ -321,7 +299,9 @@ const initChart = () => {
 
 // 更新图表
 const updateChart = (metrics: any) => {
-  if (!chart) return
+  if (!chart) {
+    return
+  }
 
   const now = new Date()
   const option = chart.getOption() as any
@@ -341,7 +321,9 @@ const updateChart = (metrics: any) => {
 
 // 格式化字节
 const formatBytes = (bytes: number): string => {
-  if (bytes === 0) return '0 B'
+  if (bytes === 0) {
+    return '0 B'
+  }
   const k = 1024
   const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
   const i = Math.floor(Math.log(bytes) / Math.log(k))
@@ -355,17 +337,27 @@ const formatUptime = (seconds: number): string => {
   const minutes = Math.floor((seconds % 3600) / 60)
 
   const parts = []
-  if (days > 0) parts.push(`${days}天`)
-  if (hours > 0) parts.push(`${hours}小时`)
-  if (minutes > 0) parts.push(`${minutes}分钟`)
+  if (days > 0) {
+    parts.push(`${days}天`)
+  }
+  if (hours > 0) {
+    parts.push(`${hours}小时`)
+  }
+  if (minutes > 0) {
+    parts.push(`${minutes}分钟`)
+  }
 
   return parts.join(' ') || '0分钟'
 }
 
 // 获取进度条颜色
 const getProgressColor = (value: number): string => {
-  if (value >= 90) return '#F56C6C'
-  if (value >= 70) return '#E6A23C'
+  if (value >= 90) {
+    return '#F56C6C'
+  }
+  if (value >= 70) {
+    return '#E6A23C'
+  }
   return '#67C23A'
 }
 
@@ -388,7 +380,9 @@ const handleServerChange = () => {
 
 // 手动采集监控数据
 const handleCollectMetrics = async () => {
-  if (!selectedServerId.value || isCollecting.value) return
+  if (!selectedServerId.value || isCollecting.value) {
+    return
+  }
 
   isCollecting.value = true
   try {

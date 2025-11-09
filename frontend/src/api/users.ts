@@ -45,48 +45,37 @@ export interface UserStatusUpdateRequest {
 /**
  * 获取用户列表
  */
-export const getUsers = (params?: UserQueryParams) => {
-  return get<PaginatedResponse<User>>('/users', params)
-}
+export const getUsers = (params?: UserQueryParams) => get<PaginatedResponse<User>>('/users', params)
 
 /**
  * 获取用户详情
  */
-export const getUser = (userId: string) => {
-  return get<User>(`/users/${userId}`)
-}
+export const getUser = (userId: string) => get<User>(`/users/${userId}`)
 
 /**
  * 创建用户
  */
-export const createUser = (data: UserCreateRequest) => {
-  return post<User>('/users', data)
-}
+export const createUser = (data: UserCreateRequest) => post<User>('/users', data)
 
 /**
  * 更新用户信息
  */
-export const updateUser = (userId: string, data: UserUpdateRequest) => {
-  return put<User>(`/users/${userId}`, data)
-}
+export const updateUser = (userId: string, data: UserUpdateRequest) =>
+  put<User>(`/users/${userId}`, data)
 
 /**
  * 删除用户
  */
-export const deleteUser = (userId: string) => {
-  return del(`/users/${userId}`)
-}
+export const deleteUser = (userId: string) => del(`/users/${userId}`)
 
 /**
  * 修改用户角色
  */
-export const updateUserRole = (userId: string, data: UserRoleUpdateRequest) => {
-  return put<User>(`/users/${userId}/role`, data)
-}
+export const updateUserRole = (userId: string, data: UserRoleUpdateRequest) =>
+  put<User>(`/users/${userId}/role`, data)
 
 /**
  * 启用/禁用用户
  */
-export const updateUserStatus = (userId: string, data: UserStatusUpdateRequest) => {
-  return put<User>(`/users/${userId}/status`, data)
-}
+export const updateUserStatus = (userId: string, data: UserStatusUpdateRequest) =>
+  put<User>(`/users/${userId}/status`, data)

@@ -5,12 +5,7 @@
       <el-aside width="280px" class="chat-aside">
         <div class="aside-header">
           <h3>{{ $t('chat.conversations') }}</h3>
-          <el-button
-            type="primary"
-            size="small"
-            :icon="Plus"
-            @click="handleNewChat"
-          >
+          <el-button type="primary" size="small" :icon="Plus" @click="handleNewChat">
             {{ $t('chat.new') }}
           </el-button>
         </div>
@@ -74,7 +69,11 @@
                 :value="server.id"
               >
                 <span>{{ server.name }}</span>
-                <el-tag size="small" :type="getServerStatusType(server.status)" style="margin-left: 8px">
+                <el-tag
+                  size="small"
+                  :type="getServerStatusType(server.status)"
+                  style="margin-left: 8px"
+                >
                   {{ server.status }}
                 </el-tag>
               </el-option>
@@ -238,15 +237,11 @@ const handleLoadConversation = async (conversationId: string) => {
 
 const handleDeleteConversation = async (conversationId: string) => {
   try {
-    await ElMessageBox.confirm(
-      t('chat.deleteConfirm'),
-      t('common.warning'),
-      {
-        confirmButtonText: t('common.confirm'),
-        cancelButtonText: t('common.cancel'),
-        type: 'warning',
-      }
-    )
+    await ElMessageBox.confirm(t('chat.deleteConfirm'), t('common.warning'), {
+      confirmButtonText: t('common.confirm'),
+      cancelButtonText: t('common.cancel'),
+      type: 'warning',
+    })
 
     await chatStore.deleteConversation(conversationId)
   } catch {
@@ -255,7 +250,9 @@ const handleDeleteConversation = async (conversationId: string) => {
 }
 
 const handleSend = async () => {
-  if (!inputMessage.value.trim() || chatStore.isSending) return
+  if (!inputMessage.value.trim() || chatStore.isSending) {
+    return
+  }
 
   const message = inputMessage.value
   inputMessage.value = ''
@@ -296,8 +293,12 @@ const renderMarkdown = (text: string): string => {
 }
 
 const truncateText = (text: string, maxLength: number): string => {
-  if (!text) return ''
-  if (text.length <= maxLength) return text
+  if (!text) {
+    return ''
+  }
+  if (text.length <= maxLength) {
+    return text
+  }
   return text.substring(0, maxLength) + '...'
 }
 
@@ -307,16 +308,20 @@ const formatDate = (date: string) => {
   const diffMs = now.getTime() - d.getTime()
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
 
-  if (diffDays === 0) return t('common.today')
-  if (diffDays === 1) return t('common.yesterday')
-  if (diffDays < 7) return `${diffDays} ${t('common.daysAgo')}`
+  if (diffDays === 0) {
+    return t('common.today')
+  }
+  if (diffDays === 1) {
+    return t('common.yesterday')
+  }
+  if (diffDays < 7) {
+    return `${diffDays} ${t('common.daysAgo')}`
+  }
 
   return d.toLocaleDateString()
 }
 
-const formatTime = (date: string) => {
-  return new Date(date).toLocaleTimeString()
-}
+const formatTime = (date: string) => new Date(date).toLocaleTimeString()
 
 const getServerStatusType = (status: string) => {
   const statusMap: Record<string, 'success' | 'danger' | 'warning' | 'info'> = {
@@ -338,10 +343,7 @@ watch(
 
 // Lifecycle
 onMounted(async () => {
-  await Promise.all([
-    serversStore.fetchServers(),
-    chatStore.fetchConversations(),
-  ])
+  await Promise.all([serversStore.fetchServers(), chatStore.fetchConversations()])
 })
 </script>
 

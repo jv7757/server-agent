@@ -3,12 +3,7 @@
  */
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type {
-  ChatRequest,
-  ChatMessage,
-  Conversation,
-  PaginatedResponse,
-} from '@/types/api'
+import type { ChatRequest, ChatMessage, Conversation, PaginatedResponse } from '@/types/api'
 import * as chatApi from '@/api/chat'
 import { ElMessage } from 'element-plus'
 
@@ -22,9 +17,9 @@ export const useChatStore = defineStore('chat', () => {
   const isLoadingMessages = ref(false)
 
   // Getters
-  const currentConversation = computed(() => {
-    return conversations.value.find((c) => c.conversation_id === currentConversationId.value)
-  })
+  const currentConversation = computed(() =>
+    conversations.value.find(c => c.conversation_id === currentConversationId.value)
+  )
 
   const hasMessages = computed(() => messages.value.length > 0)
 
@@ -121,7 +116,7 @@ export const useChatStore = defineStore('chat', () => {
       await chatApi.deleteConversation(conversationId)
 
       // 从列表中移除
-      conversations.value = conversations.value.filter((c) => c.conversation_id !== conversationId)
+      conversations.value = conversations.value.filter(c => c.conversation_id !== conversationId)
 
       // 如果删除的是当前会话，清空消息
       if (currentConversationId.value === conversationId) {

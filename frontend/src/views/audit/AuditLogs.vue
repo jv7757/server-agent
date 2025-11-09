@@ -118,9 +118,7 @@
 
         <el-table-column label="操作" width="100" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click.stop="handleViewDetail(row)">
-              详情
-            </el-button>
+            <el-button link type="primary" @click.stop="handleViewDetail(row)"> 详情 </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -140,12 +138,7 @@
     </el-card>
 
     <!-- 详情对话框 -->
-    <el-dialog
-      v-model="detailVisible"
-      title="审计日志详情"
-      width="700px"
-      destroy-on-close
-    >
+    <el-dialog v-model="detailVisible" title="审计日志详情" width="700px" destroy-on-close>
       <el-descriptions v-if="selectedLog" :column="2" border>
         <el-descriptions-item label="日志 ID">
           {{ selectedLog.id }}
@@ -290,8 +283,8 @@ const formatAction = (action: string): string => {
   return actionMap[action] || action
 }
 
-const formatDate = (dateString: string): string => {
-  return new Date(dateString).toLocaleString('zh-CN', {
+const formatDate = (dateString: string): string =>
+  new Date(dateString).toLocaleString('zh-CN', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -299,10 +292,11 @@ const formatDate = (dateString: string): string => {
     minute: '2-digit',
     second: '2-digit',
   })
-}
 
 const formatDetails = (details: Record<string, any> | null): string => {
-  if (!details) return '无'
+  if (!details) {
+    return '无'
+  }
   return JSON.stringify(details, null, 2)
 }
 

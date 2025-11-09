@@ -21,11 +21,7 @@
         router
         class="menu"
       >
-        <el-menu-item
-          v-for="route in menuRoutes"
-          :key="route.path"
-          :index="route.path"
-        >
+        <el-menu-item v-for="route in menuRoutes" :key="route.path" :index="route.path">
           <el-icon>
             <component :is="route.meta?.icon" />
           </el-icon>
@@ -130,11 +126,13 @@ const activeMenu = computed(() => {
 // 菜单路由（过滤掉hidden的路由）
 const menuRoutes = computed(() => {
   const routes = router.getRoutes()
-  const layoutChildren = routes.find((r) => r.name === 'Layout')?.children || []
+  const layoutChildren = routes.find(r => r.name === 'Layout')?.children || []
 
-  return layoutChildren.filter((route) => {
+  return layoutChildren.filter(route => {
     // 过滤掉隐藏的路由
-    if (route.meta?.hidden) return false
+    if (route.meta?.hidden) {
+      return false
+    }
 
     // 如果需要管理员权限，检查当前用户是否是管理员
     if (route.meta?.requiresAdmin && !authStore.isAdmin) {
@@ -262,7 +260,9 @@ const changeLocale = (lang: string) => {
 // 页面过渡动画
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.2s, transform 0.2s;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
 }
 
 .fade-enter-from {

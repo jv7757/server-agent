@@ -28,13 +28,10 @@ export interface AuditLogQueryParams extends PaginationParams {
 /**
  * 获取审计日志列表
  */
-export const getAuditLogs = (params?: AuditLogQueryParams) => {
-  return get<PaginatedResponse<AuditLog>>('/audit-logs', params)
-}
+export const getAuditLogs = (params?: AuditLogQueryParams) =>
+  get<PaginatedResponse<AuditLog>>('/audit-logs', params)
 
 /**
  * 获取单条审计日志详情
  */
-export const getAuditLog = (logId: number) => {
-  return get<AuditLog>(`/audit-logs/${logId}`)
-}
+export const getAuditLog = (logId: number) => get<AuditLog>(`/audit-logs/${logId}`)

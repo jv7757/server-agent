@@ -7,8 +7,8 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
   },
   server: {
     host: '0.0.0.0',
@@ -21,7 +21,7 @@ export default defineConfig({
       '/ws': {
         target: process.env.VITE_WS_BASE_URL || 'ws://localhost:8000',
         ws: true,
-      }
-    }
-  }
+      },
+    },
+  },
 })

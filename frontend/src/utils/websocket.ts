@@ -54,7 +54,7 @@ export class WebSocketClient {
         this.options.onOpen?.()
       }
 
-      this.ws.onmessage = (event) => {
+      this.ws.onmessage = event => {
         try {
           const data = JSON.parse(event.data)
           this.options.onMessage?.(data)
@@ -63,7 +63,7 @@ export class WebSocketClient {
         }
       }
 
-      this.ws.onerror = (error) => {
+      this.ws.onerror = error => {
         console.error('WebSocket error:', error)
         this.options.onError?.(error)
       }

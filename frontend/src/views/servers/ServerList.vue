@@ -73,22 +73,13 @@
 
         <el-table-column prop="tags" :label="$t('servers.tags')" min-width="150">
           <template #default="{ row }">
-            <el-tag
-              v-for="tag in row.tags"
-              :key="tag"
-              size="small"
-              style="margin-right: 5px"
-            >
+            <el-tag v-for="tag in row.tags" :key="tag" size="small" style="margin-right: 5px">
               {{ tag }}
             </el-tag>
           </template>
         </el-table-column>
 
-        <el-table-column
-          prop="created_at"
-          :label="$t('servers.createdAt')"
-          width="180"
-        >
+        <el-table-column prop="created_at" :label="$t('servers.createdAt')" width="180">
           <template #default="{ row }">
             {{ formatDate(row.created_at) }}
           </template>
@@ -103,10 +94,7 @@
             <el-button size="small" type="primary" @click="editServer(row)">
               <el-icon><Edit /></el-icon>
             </el-button>
-            <el-popconfirm
-              :title="$t('servers.deleteConfirm')"
-              @confirm="deleteServer(row)"
-            >
+            <el-popconfirm :title="$t('servers.deleteConfirm')" @confirm="deleteServer(row)">
               <template #reference>
                 <el-button size="small" type="danger">
                   <el-icon><Delete /></el-icon>
@@ -137,12 +125,7 @@
       :title="isEdit ? $t('servers.edit') : $t('servers.create')"
       width="600px"
     >
-      <el-form
-        ref="serverFormRef"
-        :model="serverForm"
-        :rules="serverRules"
-        label-width="120px"
-      >
+      <el-form ref="serverFormRef" :model="serverForm" :rules="serverRules" label-width="120px">
         <el-form-item :label="$t('servers.name')" prop="name">
           <el-input v-model="serverForm.name" />
         </el-form-item>
@@ -195,14 +178,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useServersStore } from '@/stores/servers'
 import { type FormInstance, type FormRules } from 'element-plus'
-import {
-  Plus,
-  Search,
-  Refresh,
-  Link,
-  Edit,
-  Delete,
-} from '@element-plus/icons-vue'
+import { Plus, Search, Refresh, Link, Edit, Delete } from '@element-plus/icons-vue'
 import { useI18n } from 'vue-i18n'
 import dayjs from 'dayjs'
 import type { Server } from '@/types/api'
@@ -286,9 +262,11 @@ const editServer = (server: Server) => {
  * 提交表单
  */
 const handleSubmit = async () => {
-  if (!serverFormRef.value) return
+  if (!serverFormRef.value) {
+    return
+  }
 
-  await serverFormRef.value.validate(async (valid) => {
+  await serverFormRef.value.validate(async valid => {
     if (valid) {
       submitting.value = true
       try {
@@ -377,9 +355,7 @@ const getStatusType = (status: string) => {
 /**
  * 格式化日期
  */
-const formatDate = (date: string) => {
-  return dayjs(date).format('YYYY-MM-DD HH:mm:ss')
-}
+const formatDate = (date: string) => dayjs(date).format('YYYY-MM-DD HH:mm:ss')
 
 // 挂载时加载数据
 onMounted(() => {

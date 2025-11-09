@@ -6,9 +6,7 @@
           <span class="title">用户管理</span>
           <div class="actions">
             <el-button :icon="Refresh" @click="loadUsers">刷新</el-button>
-            <el-button type="primary" :icon="Plus" @click="handleCreate">
-              新建用户
-            </el-button>
+            <el-button type="primary" :icon="Plus" @click="handleCreate"> 新建用户 </el-button>
           </div>
         </div>
       </template>
@@ -97,9 +95,7 @@
         <el-table-column label="操作" fixed="right" width="260">
           <template #default="{ row }">
             <el-button link type="primary" @click="handleEdit(row)">编辑</el-button>
-            <el-button link type="warning" @click="handleChangeRole(row)">
-              修改角色
-            </el-button>
+            <el-button link type="warning" @click="handleChangeRole(row)"> 修改角色 </el-button>
             <el-button
               link
               :type="row.is_active ? 'warning' : 'success'"
@@ -134,12 +130,7 @@
       destroy-on-close
       @close="resetForm"
     >
-      <el-form
-        ref="formRef"
-        :model="formData"
-        :rules="formRules"
-        label-width="100px"
-      >
+      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="100px">
         <el-form-item label="用户名" prop="username">
           <el-input
             v-model="formData.username"
@@ -168,19 +159,12 @@
 
       <template #footer>
         <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" :loading="submitting" @click="handleSubmit">
-          确定
-        </el-button>
+        <el-button type="primary" :loading="submitting" @click="handleSubmit"> 确定 </el-button>
       </template>
     </el-dialog>
 
     <!-- 修改角色对话框 -->
-    <el-dialog
-      v-model="roleDialogVisible"
-      title="修改用户角色"
-      width="400px"
-      destroy-on-close
-    >
+    <el-dialog v-model="roleDialogVisible" title="修改用户角色" width="400px" destroy-on-close>
       <el-form label-width="80px">
         <el-form-item label="当前用户">
           <span>{{ currentUser?.username }}</span>
@@ -203,11 +187,7 @@
 
       <template #footer>
         <el-button @click="roleDialogVisible = false">取消</el-button>
-        <el-button
-          type="primary"
-          :loading="submitting"
-          @click="handleConfirmRoleChange"
-        >
+        <el-button type="primary" :loading="submitting" @click="handleConfirmRoleChange">
           确定
         </el-button>
       </template>
@@ -343,10 +323,14 @@ const handleEdit = (user: User) => {
 }
 
 const handleSubmit = async () => {
-  if (!formRef.value) return
+  if (!formRef.value) {
+    return
+  }
 
-  await formRef.value.validate(async (valid) => {
-    if (!valid) return
+  await formRef.value.validate(async valid => {
+    if (!valid) {
+      return
+    }
 
     submitting.value = true
     try {
@@ -391,7 +375,9 @@ const handleChangeRole = (user: User) => {
 }
 
 const handleConfirmRoleChange = async () => {
-  if (!currentUser.value || !newRole.value) return
+  if (!currentUser.value || !newRole.value) {
+    return
+  }
 
   if (newRole.value === currentUser.value.role) {
     ElMessage.warning('角色未改变')
@@ -415,15 +401,11 @@ const handleConfirmRoleChange = async () => {
 const handleToggleStatus = async (user: User) => {
   const action = user.is_active ? '禁用' : '启用'
   try {
-    await ElMessageBox.confirm(
-      `确定要${action}用户 ${user.username} 吗？`,
-      '确认操作',
-      {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-      }
-    )
+    await ElMessageBox.confirm(`确定要${action}用户 ${user.username} 吗？`, '确认操作', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    })
 
     await usersApi.updateUserStatus(user.id, { is_active: !user.is_active })
     ElMessage.success(`用户已${action}`)
@@ -486,15 +468,14 @@ const formatRole = (role: string): string => {
   return roleMap[role] || role
 }
 
-const formatDate = (dateString: string): string => {
-  return new Date(dateString).toLocaleString('zh-CN', {
+const formatDate = (dateString: string): string =>
+  new Date(dateString).toLocaleString('zh-CN', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
   })
-}
 
 // Lifecycle
 onMounted(() => {
