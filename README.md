@@ -222,6 +222,66 @@ cd frontend
 npm run test
 ```
 
+## 🔍 代码质量
+
+项目配置了完整的代码质量检查工具，确保代码风格一致和质量。
+
+### 快速开始
+
+```bash
+# 安装 pre-commit hooks
+make install-hooks
+
+# 检查所有代码
+make lint
+
+# 格式化所有代码
+make format
+```
+
+### 后端工具
+
+- **Black** - 代码格式化
+- **Flake8** - 代码检查 (PEP 8)
+- **isort** - Import 排序
+- **mypy** - 类型检查
+
+```bash
+# 后端代码检查
+make lint-backend
+
+# 后端代码格式化
+make format-backend
+```
+
+### 前端工具
+
+- **ESLint** - 代码检查
+- **Prettier** - 代码格式化
+- **TypeScript** - 类型检查
+
+```bash
+# 前端代码检查
+make lint-frontend
+
+# 前端代码格式化
+make format-frontend
+```
+
+### Pre-commit Hooks
+
+项目配置了 pre-commit hooks，在每次提交前自动运行代码检查和格式化。
+
+```bash
+# 安装 hooks
+make install-hooks
+
+# 手动运行所有 hooks
+pre-commit run --all-files
+```
+
+详细说明请查看 [CODE_QUALITY.md](./CODE_QUALITY.md)。
+
 ## 📝 API文档
 
 启动后端服务后访问：
@@ -240,7 +300,9 @@ MIT License
 ## 🔗 相关文档
 
 - [系统设计文档](./DESIGN.md)
-- [API文档](http://localhost:8000/docs)
+- [API文档](./API.md)
+- [代码质量指南](./CODE_QUALITY.md)
+- [测试文档](./backend/tests/README.md)
 - [部署指南](./docs/deployment.md) (待完善)
 
 ## 📧 联系方式
